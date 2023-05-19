@@ -1,0 +1,13 @@
+.offset_ticket_theory_exam{
+    display: flex;
+    width: 100%;
+    padding: 5% 15% 0px;
+    justify-content: center;
+}
+
+.ticket_text_aside{
+    font-family: "Montserrat";
+    font-size: 18px;
+    line-height: 16px;
+    font-weight: 500;
+}
