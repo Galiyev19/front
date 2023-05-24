@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { set, useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 
-
 // COMPONENTS
 import ModalLoading from "../../ModalLoading/ModalLoading";
 import UserDataView from "../../UserDataView/UserDataView";
-
 
 import { setData } from "../../../../store/slices/ReservationTheoryData";
 import { setDepartmentDataList } from "../../../../store/slices/departmentDataSlice";
@@ -19,24 +17,24 @@ import {
   getExamDateById,
 } from "../../../../helpers/ApiRequestList";
 
-const TheoryExamForm = (  ) => {
+const TheoryExamForm = () => {
   //FOR LOADING MODAL
   const [loading, setLoading] = useState(false);
   const [today, setToday] = useState(null);
 
   //FOR DISABLED SELECT
- 
+
   // const [addressDepartament, setAddressDepartament] = useState([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState(null);
 
- 
   const [dateList, setDateList] = useState([]);
   const [examId, setExamId] = useState(null);
   const [dateError, setDateError] = useState(false);
 
   const [errorText, setErrorText] = useState("");
-  const [isAdd,setIsAdd] = useState(null)
+  const [isAdd, setIsAdd] = useState(null);
+  const [isRecord, setIsRecord] = useState(false);
 
   // DATA FROM REDUX
   const userData = useSelector((state) => state.userData.userData);
@@ -60,8 +58,6 @@ const TheoryExamForm = (  ) => {
     IIN: "",
     mode: "onChange",
   });
-
- 
 
   //SELECT DATE
   const onChangeSelectDate = (value) => {
@@ -94,10 +90,8 @@ const TheoryExamForm = (  ) => {
   //CANCEL ACTION GO BACK
   const handnleCancelResTheoryExam = () => {
     // navigate(-1);
-    reset()
+    reset();
   };
-
-
 
   //POST DATA TO SERVER FOR BOOKING THEORY EXAM
   const postUserData = async (obj) => {
@@ -120,10 +114,16 @@ const TheoryExamForm = (  ) => {
           return response.json();
         } else {
           setErrorText(response.status);
-          console.log(response)
+          throw new Error(`Request failed with status code ${response.status}`);
+          // console.log(response)
         }
       })
       .then((res) => {
+        console.log(res)
+        const record = Object.values(res)[0];
+        // console.log(record)
+        setIsRecord(record);
+        console.log(isRecord)
         // setIsAdd(res)
         // sessionStorage.setItem('isAdd',res.enrolled)
       })
@@ -140,28 +140,27 @@ const TheoryExamForm = (  ) => {
       exam_id: examId,
     };
 
-    console.log(obj)
-  
-    console.log(userData)
+    console.log(obj);
+
+    console.log(userData);
 
     //POST DATA USER FOR SERVER
     postUserData(obj);
     dispatch(setData(obj));
 
-    setLoading(true); 
-
+    setLoading(true);
 
     //TIME FOR ANIMATION LOADING
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   navigate("/reservation/theory-exam/ticket")
-    // }, 500);
-   
+      // setTimeout(() => {
+      //   setLoading(false);
+      // }, 500);
+
+      if(isRecord === false){
+        navigate("/reservation/theory-exam/ticket");
+      }
 
     reset();
   };
-
-  
 
   const getExamsDate = async (id) => {
     const response = await getExamDateById(id);
@@ -178,105 +177,103 @@ const TheoryExamForm = (  ) => {
   useEffect(() => {
     const todayDate = new Date().toISOString().slice(0, 10);
     setToday(todayDate);
-    getExamsDate(userData.department_code)
+    getExamsDate(userData.department_code);
+    console.log(isRecord);
     // getCityList();
-  }, [
-    date,
-    dateList?.length,
-    isAdd
-  ]);
+  }, [date, dateList?.length, isAdd, isRecord]);
 
   return (
     <div className="form_input_date_item">
       <div className="form-control my-4 ">
         <UserDataView />
       </div>
-        <form
-          className="d-flex w-100 flex-column"
-          onSubmit={handleSubmit(handleSubmitTheoryExam)}
+      <div className="w-100 d-flex text-center">{isRecord && <h2 className="text-danger">Вы уже записаны</h2>}</div>
+      <form
+        className="d-flex w-100 flex-column"
+        onSubmit={handleSubmit(handleSubmitTheoryExam)}
+      >
+        {/* CITY  */}
+
+        <p className="my-2">Город</p>
+        <input disabled={true} value={userData.city} className="form-control" />
+
+        {/*DEPARTMENT  */}
+
+        <p className="my-2">Отделение</p>
+        <input
+          className="form-control"
+          disabled={true}
+          value={userData.department}
+        />
+
+        {/* SELECT DATE */}
+
+        {/* ERROR IF DATE LIST EMPTY */}
+        {dateError ? (
+          <p className="fs-5 my-2 text-danger">
+            К сожалению в этот день отсутствует запись в текущий департамент
+          </p>
+        ) : null}
+
+        <p className="my-2">Выберите дату</p>
+        <input
+          className="form-control"
+          type="date"
+          min={today || dateList[0]?.date}
+          max={dateList[dateList.length - 1]?.date}
+          disabled={dateList.length === 0}
+          {...register("date", { required: true })}
+          onChange={(e) => onChangeSelectDate(e.target.value)}
+        />
+        {errors?.selectDate && (
+          <p className="error_text text-danger my-2">Выберите дату</p>
+        )}
+
+        {/* SELECT TIME */}
+
+        {/* ERROR TEXT IF TIME NOT GET */}
+        {time?.length === 0 ? (
+          <p className="fs-5 my-2 text-danger">
+            К сожалению в текущий день нету записей
+          </p>
+        ) : null}
+        <p className="my-2">Выберите время</p>
+        <select
+          className="form-select"
+          {...register("time", {
+            required: true,
+          })}
+          disabled={date === "" || time?.length === 0}
+          onChange={(e) => onChangeSelectTime(e.target.value)}
         >
-          {/* CITY  */}
+          <option value="">Выберите время</option>
+          {time?.map((time) => (
+            <option key={time.id}>{time.time}</option>
+          ))}
+        </select>
+        {errors?.selectTime && (
+          <p className="error_text text-danger my-2">Выберите время</p>
+        )}
 
-          <p className="my-2">Город</p>
-          <input disabled={true} value={userData.city} className="form-control"/>
-    
-
-          {/*DEPARTMENT  */}
-
-          <p className="my-2">Отделение</p>
-          <input className="form-control" disabled={true} value={userData.department}/>
-  
-
-          {/* SELECT DATE */}
-
-          {/* ERROR IF DATE LIST EMPTY */}
-          {dateError ? (
-            <p className="fs-5 my-2 text-danger">
-              К сожалению в этот день отсутствует запись в текущий департамент 
-            </p>
-          ) : null}
-
-          <p className="my-2">Выберите дату</p>
-          <input
-            className="form-control"
-            type="date"
-            min={today || dateList[0]?.date}
-            max={dateList[dateList.length - 1]?.date}
-            disabled={dateList.length === 0}
-            {...register("date", { required: true })}
-            onChange={(e) => onChangeSelectDate(e.target.value)}
-          />
-          {errors?.selectDate && (
-            <p className="error_text text-danger my-2">Выберите дату</p>
-          )}
-
-          {/* SELECT TIME */}
-
-          {/* ERROR TEXT IF TIME NOT GET */}
-          {time?.length === 0 ? (
-            <p className="fs-5 my-2 text-danger">
-              К сожалению в текущий день нету записей
-            </p>
-          ) : null}
-          <p className="my-2">Выберите время</p>
-          <select
-            className="form-select"
-            {...register("time", {
-              required: true,
-            })}
-            disabled={date === "" || time?.length === 0}
-            onChange={(e) => onChangeSelectTime(e.target.value)}
+        {/* BUTTONS */}
+        <div className="d-flex w-100 align-items-center justify-content-center mt-3">
+          <button
+            className="btn btn-danger mx-1"
+            onClick={() => handnleCancelResTheoryExam()}
           >
-            <option value="">Выберите время</option>
-            {time?.map((time) => (
-              <option key={time.id}>{time.time}</option>
-            ))}
-          </select>
-          {errors?.selectTime && (
-            <p className="error_text text-danger my-2">Выберите время</p>
-          )}
+            Отмена
+          </button>
 
-          {/* BUTTONS */}
-          <div className="d-flex w-100 align-items-center justify-content-center mt-3">
-            <button
-              className="btn btn-danger mx-1"
-              onClick={() => handnleCancelResTheoryExam()}
-            >
-              Отмена
-            </button>
-
-            <button
-              disabled={examId === null}
-              className="btn btn-success mx-1"
-              type="submit"
-            >
-              Подтвердить
-            </button>
-          </div>
-        </form>
-      {/* <div>
-        <h2>{errorText.error}</h2>
-      </div> */}
+          <button
+            disabled={examId === null}
+            className="btn btn-success mx-1"
+            type="submit"
+          >
+            Подтвердить
+          </button>
+        </div>
+      </form>
+      
       {loading && <ModalLoading isLoading={loading} />}
     </div>
   );
