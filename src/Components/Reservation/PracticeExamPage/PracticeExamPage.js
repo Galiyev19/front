@@ -55,44 +55,25 @@ const PracticeExamPage = () => {
     })
       .then((response) => {
         if (response.ok) {
+          setSearch(false)
           return response.json();
         } else {
           throw new Error(`Request failed with status code ${response.status}`);
         }
       })
       .then((data) => {
-        if (
-          data[0]?.fields.statusT === false &&
-          data[0]?.fields.statusP === false
-        ) {
+          if(data.find === false){
+          setIsUser(true);
           setSearch(false);
-          setIsTheoryResModal(true);
-          console.log(1);
-        } else if (
-          data[0]?.fields.statusT === true &&
-          data[0]?.fields.statusP === false
-        ) {
-          setSearch(true);
-         
-          dispatch(setDataUser(data[0]));
-          console.log(2);
-        } else if (
-          data[0]?.fields.statusT === true &&
-          data[0]?.fields.statusP === true
-        ) {
-      
-          setCongartModal(true)
-          console.log(3);
-        } else {
-          setSearch(true);
-          dispatch(setDataUser(data[0]));
+        }else{
+          dispatch(setDataUser(data));
+          setSearch(true)
         }
-        console.log(data);
       })
       .catch((error) => {
-        setSearch(false);
-        // setIsUser(true);
-        console.error(error);
+          setIsUser(true);
+          setSearch(false);
+        // console.error(error);
       });
   };
 
@@ -100,7 +81,7 @@ const PracticeExamPage = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-    }, 800);
+    }, 500);
 
     getUserData(data);
     reset();
@@ -145,8 +126,8 @@ const PracticeExamPage = () => {
             />
             {/* ERRORS FOR INPUT */}
             {errors.IIN && <p className="text-danger">{errors.IIN.message}</p>}
-            {/* ERROR NOT FOUND TICKTE */}
-            {/* {isUser && <p className="text-danger">Неверный цифровой талон</p>} */}
+            {/* ERROR NOT FOUND TICKTET */}
+            {isUser && <p className="text-danger">Неверный цифровой талон</p>}
             {/* ERROR IF USER BOOKIG FOR PRACTICE EXAM */}
            
             {/* SUBMIT BUTTON */}

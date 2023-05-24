@@ -70,8 +70,8 @@ useOnClickOutside(ref, () => setTest(false));
           </div>  
       </div>
       <div className="menu">
-        {/* <Menu /> */}
-        <MenuNewDesign/>
+        <Menu />
+        {/* <MenuNewDesign/> */}
       </div>
     </main>
   );

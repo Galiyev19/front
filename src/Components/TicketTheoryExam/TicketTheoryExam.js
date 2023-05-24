@@ -17,9 +17,9 @@ export default function TicketTheoryExam() {
     const date = sessionStorage.getItem("date");
     setDate(JSON.parse(date));
     console.log(date);
-    const obj = sessionStorage.getItem("department");
-    const departament = JSON.parse(obj);
-    setDepartment(departament[0]);
+    // const obj = sessionStorage.getItem("department");
+    // const departament = JSON.parse(obj);
+    // setDepartment(departament[0]);
     // const isAdd = sessionStorage.getItem("isAdd");
     // setIsAdd(isAdd);
   }, []);
@@ -47,7 +47,7 @@ export default function TicketTheoryExam() {
             <label className="my-2 d-flex flex-wrap">
               <span className="ticket_text_aside">
                 Адрес СпеЦОНa:{" "}
-                <span className="fw-bold">{department?.name}</span>
+                <span className="fw-bold">{user?.department}</span>
               </span>
               <span>{}</span>
             </label>

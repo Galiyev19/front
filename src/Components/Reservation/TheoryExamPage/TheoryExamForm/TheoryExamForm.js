@@ -25,17 +25,12 @@ const TheoryExamForm = (  ) => {
   const [today, setToday] = useState(null);
 
   //FOR DISABLED SELECT
-  const [city, setCity] = useState(null);
+ 
   // const [addressDepartament, setAddressDepartament] = useState([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState(null);
 
-  const [idDepartment, setIdDepartment] = useState(null);
-  const [selectedDeparment, setSelectedDepartement] = useState([]);
-
-  const [cityList, setCityList] = useState(null);
-  const [departmentList, setDepartmentList] = useState(null);
-  const [sortedDepartmentList, setSortedDepartmentList] = useState([]);
+ 
   const [dateList, setDateList] = useState([]);
   const [examId, setExamId] = useState(null);
   const [dateError, setDateError] = useState(false);
@@ -60,45 +55,13 @@ const TheoryExamForm = (  ) => {
     setValue,
     formState: { errors, isDirty, isValid },
   } = useForm({
-    city: "",
-    department: 0,
     date: "",
     time: "",
     IIN: "",
     mode: "onChange",
   });
 
-  //SELECT CITY AND GET DEPARTMENT LIST IN THIS CITY
-  const onChangeCountry = (value) => {
-    const idx = cityList?.find((item) => item.name.includes(value));
-    
-    setIdDepartment(idx);
-
-    const selectedDeparment = departmentList?.filter(
-      (item) => item.city === idx.id
-      );
-    setCity(departmentList[idx]);
-    setSortedDepartmentList(selectedDeparment); 
-  };
-
-  // SELECT DEPARTMENT TO GET DATE LIST EXAM
-  const onChangeDepartment = async (id) => {
-    setSelectedDepartement(id);
-    //Toogle for modal open for loading animation
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
-
-    const departament = departmentList.filter(
-      (item) => item.id === parseInt(id)
-    );
-
-    dispatch(setDepartmentDataList(departament));
-    console.log(id)
-    getExamsDate(id);
-  };
+ 
 
   //SELECT DATE
   const onChangeSelectDate = (value) => {
@@ -157,16 +120,15 @@ const TheoryExamForm = (  ) => {
           return response.json();
         } else {
           setErrorText(response.status);
-          throw new Error(`Request failed with status code ${response.status}`);
+          console.log(response)
         }
       })
       .then((res) => {
-        console.log(res);
-        setIsAdd(res)
-        sessionStorage.setItem('isAdd',res.enrolled)
+        // setIsAdd(res)
+        // sessionStorage.setItem('isAdd',res.enrolled)
       })
       .catch(function (res) {
-        setErrorText(res);
+        // setErrorText(res);
         console.log(res);
       });
   };
@@ -174,11 +136,13 @@ const TheoryExamForm = (  ) => {
   //SUBMIT FOR RESERVATION TO THEORY EXAM
   const handleSubmitTheoryExam = (data) => {
     const obj = {
-      user_id: userData.pk,
+      user_id: userData.id,
       exam_id: examId,
     };
+
+    console.log(obj)
   
-    console.log(userData.pk)
+    console.log(userData)
 
     //POST DATA USER FOR SERVER
     postUserData(obj);
@@ -188,27 +152,16 @@ const TheoryExamForm = (  ) => {
 
 
     //TIME FOR ANIMATION LOADING
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/reservation/theory-exam/ticket")
-    }, 500);
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   navigate("/reservation/theory-exam/ticket")
+    // }, 500);
    
 
     reset();
   };
 
-  //GET CITIES LIST
-  const getCityList = async () => {
-    const response = await getCitiesList();
-    setCityList(response);
-    getDepartment()
-  };
-
-  //GET DEPARTMENT LIST
-  const getDepartment = async () => {
-    const response = await getDepartmentList();
-    setDepartmentList(response);
-  };
+  
 
   const getExamsDate = async (id) => {
     const response = await getExamDateById(id);
@@ -225,14 +178,11 @@ const TheoryExamForm = (  ) => {
   useEffect(() => {
     const todayDate = new Date().toISOString().slice(0, 10);
     setToday(todayDate);
-    getCityList();
+    getExamsDate(userData.department_code)
+    // getCityList();
   }, [
-    city,
     date,
-    sortedDepartmentList,
     dateList?.length,
-    idDepartment,
-    selectedDeparment,
     isAdd
   ]);
 
@@ -245,46 +195,17 @@ const TheoryExamForm = (  ) => {
           className="d-flex w-100 flex-column"
           onSubmit={handleSubmit(handleSubmitTheoryExam)}
         >
-          {/* SELECT CITY */}
+          {/* CITY  */}
 
           <p className="my-2">Город</p>
-          <select
-            className="form-select"
-            {...register("city", {
-              required: true,
-            })}
-            onChange={(e) => onChangeCountry(e.target.value)}
-          >
-            <option value="">Выберите город</option>
-            {cityList?.map((item) => (
-              <option key={item.id}>{item.name}</option>
-            ))}
-          </select>
-          {errors?.selectCity && (
-            <p className="error_text text-danger my-2">Выберите город</p>
-          )}
+          <input disabled={true} value={userData.city} className="form-control"/>
+    
 
-          {/*SELECT DEPARTMENT  */}
+          {/*DEPARTMENT  */}
 
           <p className="my-2">Отделение</p>
-          <select
-            className="form-select"
-            {...register("department", {
-              required: true,
-            })}
-            onChange={(e) => onChangeDepartment(e.target.value)}
-            disabled={city === null}
-          >
-            <option value="">Выберите Отделение</option>
-            {sortedDepartmentList?.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-          {errors?.selectAddress && (
-            <p className="error_text text-danger my-2">Выберите отделение</p>
-          )}
+          <input className="form-control" disabled={true} value={userData.department}/>
+  
 
           {/* SELECT DATE */}
 
@@ -353,9 +274,9 @@ const TheoryExamForm = (  ) => {
             </button>
           </div>
         </form>
-      <div>
-        <h2>{errorText}</h2>
-      </div>
+      {/* <div>
+        <h2>{errorText.error}</h2>
+      </div> */}
       {loading && <ModalLoading isLoading={loading} />}
     </div>
   );

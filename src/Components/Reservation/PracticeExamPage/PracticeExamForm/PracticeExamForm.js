@@ -52,65 +52,7 @@ const PracticeExamForm = ({ isReserv }) => {
     mode: "onChange",
   });
 
-  //GET CITY LIST
-  const getCityList = async () => {
-    const response = await getCitiesList();
-    setCityList(response);
-    getDepartments();
-  };
 
-  //GET DEPARTMENT LIST
-  const getDepartments = async () => {
-    const response = await getDepartmentList();
-    setDepartmentList(response);
-  };
-
-  // const getExamsDate = async (id) => {
-  //   const response = await getExamDateById(id);
-  //   console.log(response);
-  //   if (response.length === 0) {
-  //     // setDateError(true)
-  //     setDateList(response);
-  //   } else {
-  //     setDateError(false);
-  //     setDateList(response);
-  //   }
-  // };
-
-  //SELECT CITY AND GET DEPARTMENT LIST IN THIS CITY
-
-  const onChangeCountry = (value) => {
-    const idx = cityList?.find((item) => item.name.includes(value));
-    // console.log(idx);
-    // setIdDepartmentId(idx.id);
-    const selectedDeparment = departmentList?.filter(
-      (item) => item.city === idx.id
-    );
-    setCity(departmentList[idx]);
-    setSortedDepartmentList(selectedDeparment);
-  };
-
-
-  const onChangeDepartment = (id) => {
-    setSelectedDepartement(id);
-
-    //Toogle for modal open for loading animation
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
-
-    const departament = departmentList.filter(
-      (item) => item.id === parseInt(id)
-    );
-
-    //setDepartmentList
-    dispatch(setDepartmentDataList(departament));
-    const value = parseInt(id);
-    // console.log(value)
-    setIdDepartmentId(value);
-    getFreeExamPractice(value);
-  };
 
   //SELECT DATE
   const onChangeSelectDate = (value) => {
@@ -242,7 +184,6 @@ const PracticeExamForm = ({ isReserv }) => {
   useEffect(() => {
     const todayDate = new Date().toISOString().slice(0, 10);
     setToday(todayDate);
-    getCityList();
   }, [idDepartment, dateList]);
 
   return (
@@ -254,44 +195,14 @@ const PracticeExamForm = ({ isReserv }) => {
         onSubmit={handleSubmit(handleSubmitPraticeExam)}
         className="d-flex flex-column w-100"
       >
+        {/* CITY */}
         <p className="my-2">Город</p>
-        <select
-          className="form-select"
-          {...register("selectCity", {
-            required: true,
-          })}
-          onChange={(e) => onChangeCountry(e.target.value)}
-        >
-          <option value="">Выберите город</option>
-          {cityList.map((item) => (
-            <option key={item.id}>{item.name}</option>
-          ))}
-        </select>
-        {errors?.selectCity && (
-          <p className="error_text text-danger my-2">Выберите город</p>
-        )}
+        <input disabled="true" className="form-control" value={userData.city}/>
         
-        {/* SELECT DEPARTMENT */}
+        {/* DEPARTMENT */}
 
         <p className="my-2">Отделение</p>
-        <select
-          className="form-select"
-          {...register("selectAddress", {
-            required: true,
-          })}
-          onChange={(e) => onChangeDepartment(e.target.value)}
-          disabled={city === null}
-        >
-          <option value="">Выберите отделение</option>
-          {sortedDepartmentList?.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-        </select>
-        {errors?.selectAddress && (
-          <p className="error_text text-danger my-2">Выберите отделение</p>
-        )}
+        <input disabled="true" className="form-control" value={userData.department}/>
 
         {/* SELECT DATE */}
         {dateError ? (

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
     isLoading: false,
-    userData: [],
+    userData: {},
     error: "Error",
 
 };
@@ -12,9 +12,10 @@ const userData = createSlice({
   initialState,
   reducers: {
     setDataUser: (state,action) => {
-        state.userData = action.payload
         const obj = JSON.stringify(action.payload)
         sessionStorage.setItem("user",obj)
+        const objStorage = sessionStorage.getItem('user')
+        state.userData = JSON.parse(objStorage)
     }
   },
 

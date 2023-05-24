@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import TheoryExamForm from "./TheoryExamForm/TheoryExamForm";
@@ -28,6 +28,7 @@ const TheoryExamPage= () => {
 
   // const data = useSelector((state) => state.data.data);
   const dispatch = useDispatch();
+
 
   const {
     register,
@@ -61,24 +62,25 @@ const TheoryExamPage= () => {
     })
       .then((response) => {
         if (response.ok) {
-          setSearch(false)
           return response.json();
         } else {
           throw new Error(`Request failed with status code ${response.status}`);
         }
       })
       .then((data) => {
-        // if(data[0]?.fields?.statusT === true){
-        //   setIsReserv(true)
-        // }else{
-        //   setSearch(true);
-        // }
+        if(data !== []){
           dispatch(setDataUser(data));
-        setSearch(true)
+          setSearch(true)
+        }else  if(data.statusT === true){
+          setIsReserv(true)
+        } else if (data.find === false){
+          setIsUser(true);
+        }
+
+       console.log(data)
       })
       .catch((error) => {
-        setSearch(false);
-        setIsUser(true);
+        // setSearch(false);
       });
   };
 
