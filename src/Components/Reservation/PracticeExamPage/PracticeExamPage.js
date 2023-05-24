@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
@@ -10,8 +10,12 @@ import { setDataUser } from "../../../store/slices/userDataSlice";
 import ModalPracticeError from "../../Modal/ModalPracticeError";
 import ModalCongratPractice from "../../Modal/ModalCongratPractice";
 
+import { IoIosArrowBack } from "react-icons/io";
+import { useNavigate } from "react-router";
+
 const PracticeExamPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate()
 
   const [search, setSearch] = useState(false);
   const [isloading, setIsLoading] = useState(false);
@@ -87,7 +91,7 @@ const PracticeExamPage = () => {
       })
       .catch((error) => {
         setSearch(false);
-        setIsUser(true);
+        // setIsUser(true);
         console.error(error);
       });
   };
@@ -96,7 +100,7 @@ const PracticeExamPage = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-    }, 500);
+    }, 800);
 
     getUserData(data);
     reset();
@@ -105,22 +109,28 @@ const PracticeExamPage = () => {
   useEffect(() => {}, [search, isReserv]);
 
   return (
-    <div className="offset">
+    <div className="offset_theory_exam_page flex-column">
       <div className="d-flex w-100 text-center flex-column mt-4">
         <h2 className="header_text_theory_exam_form">
           {t("titlePagePracticeExam")}
         </h2>
       </div>
+      <div className="d-flex w-100">
+        <button className="btn_back" onClick={() => navigate(-1)}>
+          <IoIosArrowBack/>
+          назад
+        </button>
+      </div>
       <div className="d-flex w-100 text-start align-items-center justify-content-center">
         {!search ? (
           <form
-            className="d-flex align-items-center justify-content-center flex-column w-100 mt-3"
+            className="form_input"
             onSubmit={handleSubmit(submit)}
           >
             <p className="text-center">{t("head_text_input")}</p>
             {/* INPUT TICKET */}
             <input
-              className="form-control w-50 my-2"
+              className="form-control input_w my-2"
               placeholder={t("head_text_input")}
               maxLength="12"
               minLength="12"
@@ -136,12 +146,12 @@ const PracticeExamPage = () => {
             {/* ERRORS FOR INPUT */}
             {errors.IIN && <p className="text-danger">{errors.IIN.message}</p>}
             {/* ERROR NOT FOUND TICKTE */}
-            {isUser && <p className="text-danger">Неверный цифровой талон</p>}
+            {/* {isUser && <p className="text-danger">Неверный цифровой талон</p>} */}
             {/* ERROR IF USER BOOKIG FOR PRACTICE EXAM */}
            
             {/* SUBMIT BUTTON */}
             <button
-              className="btn btn-success w-25 my-2"
+              className="btn btn-success btn_width my-2"
               type="submit"
               disabled={!isDirty || !isValid}
             >
@@ -154,11 +164,14 @@ const PracticeExamPage = () => {
           </div>
         )}
       </div>
+      {/* MODAL LOADING ANIMATE  */}
       {isloading && <ModalLoading isLoading={isloading} />}
+      {/* SHOW MODAL ERROR */}
       <ModalPracticeError
         isTheoryResModal={isTheoryResModal}
         setShow={setIsTheoryResModal}
       />
+      {/* SHOW CONGRATULATION MODAL */}
       <ModalCongratPractice
         congartModal={congartModal}
         setShow={setCongartModal}

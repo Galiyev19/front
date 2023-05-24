@@ -38,6 +38,7 @@ const PracticeExamForm = ({ isReserv }) => {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.userData.userData);
 
+  const [cityName,setCityName] = useState(null)
   const {
     register,
     handleSubmit,
@@ -88,6 +89,7 @@ const PracticeExamForm = ({ isReserv }) => {
     setCity(departmentList[idx]);
     setSortedDepartmentList(selectedDeparment);
   };
+
 
   const onChangeDepartment = (id) => {
     setSelectedDepartement(id);
@@ -244,7 +246,7 @@ const PracticeExamForm = ({ isReserv }) => {
   }, [idDepartment, dateList]);
 
   return (
-    <div className="d-flex flex-column w-50">
+    <div className="form_input_date_item">
       <div className="d-flex align-items-center justify-content-center form-control my-4 ">
         <UserDataView />
       </div>
@@ -268,7 +270,7 @@ const PracticeExamForm = ({ isReserv }) => {
         {errors?.selectCity && (
           <p className="error_text text-danger my-2">Выберите город</p>
         )}
-
+        
         {/* SELECT DEPARTMENT */}
 
         <p className="my-2">Отделение</p>

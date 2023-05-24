@@ -21,6 +21,8 @@ export const getCitiesList = async () => {
   return result;
 };
 
+
+
 export const getDepartmentList = async () => {
   const url = "/api/departments/";
   const username = "admin";
@@ -41,6 +43,28 @@ export const getDepartmentList = async () => {
   const result = await response.json();
   return result;
 };
+
+
+export const getDepartmentById = async (id) => {
+  const url = "api/departments/"
+  const username = 'admin'
+  const password = 'admin'
+
+  const response = await fetch(url + id, {
+    headers: {
+      Authorization: "Basic " + btoa(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
+    },
+    method: "GET"
+  })
+
+  const result = await response.json()
+  return result;
+}
 
 export const getExamDateById = async (id) => {
   const username = "admin";

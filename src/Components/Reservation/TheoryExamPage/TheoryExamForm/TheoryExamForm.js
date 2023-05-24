@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 
 
@@ -11,6 +11,7 @@ import UserDataView from "../../UserDataView/UserDataView";
 
 import { setData } from "../../../../store/slices/ReservationTheoryData";
 import { setDepartmentDataList } from "../../../../store/slices/departmentDataSlice";
+import { toggleIsAdd } from "../../../../store/slices/congratEnrollExam";
 
 import {
   getCitiesList,
@@ -40,6 +41,7 @@ const TheoryExamForm = (  ) => {
   const [dateError, setDateError] = useState(false);
 
   const [errorText, setErrorText] = useState("");
+  const [isAdd,setIsAdd] = useState(null)
 
   // DATA FROM REDUX
   const userData = useSelector((state) => state.userData.userData);
@@ -76,8 +78,7 @@ const TheoryExamForm = (  ) => {
       (item) => item.city === idx.id
       );
     setCity(departmentList[idx]);
-    setSortedDepartmentList(selectedDeparment);
-      
+    setSortedDepartmentList(selectedDeparment); 
   };
 
   // SELECT DEPARTMENT TO GET DATE LIST EXAM
@@ -112,7 +113,6 @@ const TheoryExamForm = (  ) => {
   //SELECT TIME
   const onChangeSelectTime = (value) => {
     const obj = time.filter((item) => item.time.includes(value));
-    // console.log(obj)
     const timeObj = {
       date: obj[0]?.date,
       time: obj[0]?.time,
@@ -130,8 +130,11 @@ const TheoryExamForm = (  ) => {
 
   //CANCEL ACTION GO BACK
   const handnleCancelResTheoryExam = () => {
-    navigate(-1);
+    // navigate(-1);
+    reset()
   };
+
+
 
   //POST DATA TO SERVER FOR BOOKING THEORY EXAM
   const postUserData = async (obj) => {
@@ -159,6 +162,8 @@ const TheoryExamForm = (  ) => {
       })
       .then((res) => {
         console.log(res);
+        setIsAdd(res)
+        sessionStorage.setItem('isAdd',res.enrolled)
       })
       .catch(function (res) {
         setErrorText(res);
@@ -172,6 +177,8 @@ const TheoryExamForm = (  ) => {
       user_id: userData.pk,
       exam_id: examId,
     };
+  
+    console.log(userData.pk)
 
     //POST DATA USER FOR SERVER
     postUserData(obj);
@@ -179,11 +186,13 @@ const TheoryExamForm = (  ) => {
 
     setLoading(true); 
 
+
     //TIME FOR ANIMATION LOADING
     setTimeout(() => {
       setLoading(false);
-      navigate("/reservation/theory-exam/ticket");
+      navigate("/reservation/theory-exam/ticket")
     }, 500);
+   
 
     reset();
   };
@@ -224,10 +233,11 @@ const TheoryExamForm = (  ) => {
     dateList?.length,
     idDepartment,
     selectedDeparment,
+    isAdd
   ]);
 
   return (
-    <div className="d-flex flex-column w-50">
+    <div className="form_input_date_item">
       <div className="form-control my-4 ">
         <UserDataView />
       </div>
@@ -344,7 +354,7 @@ const TheoryExamForm = (  ) => {
           </div>
         </form>
       <div>
-        <h2>{setErrorText}</h2>
+        <h2>{errorText}</h2>
       </div>
       {loading && <ModalLoading isLoading={loading} />}
     </div>

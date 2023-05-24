@@ -13,7 +13,7 @@ const userData = createSlice({
   reducers: {
     setDataUser: (state,action) => {
         state.userData = action.payload
-        const obj = JSON.stringify(action.payload.fields)
+        const obj = JSON.stringify(action.payload)
         sessionStorage.setItem("user",obj)
     }
   },

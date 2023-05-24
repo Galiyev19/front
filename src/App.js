@@ -14,6 +14,7 @@ import SearchResultExam from "./Components/SearchResultExam/SearchResultExam";
 import PracticeExamPage from "./Components/Reservation/PracticeExamPage/PracticeExamPage";
 import ErrorPage from "./Components/ErrorPage/ErrorPage";
 import TicketPracticeExam from "./Components/TicketPracticeExam/TicketPracticeExam";
+import ErrorEnrollPage from "./Components/ErrorPage/ErrorEnrollPage";
 
 import "./App.css";
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/result-exam" element={<ResultExam/>}/>
           <Route path="/traffic-rules" element={<TrafficRulesInstructions/>}/>
           <Route path="/search-result-exam" element={<SearchResultExam/>}/>
+          <Route path="/error-enroll-page" element={<ErrorEnrollPage/>}/>
           <Route path="*" element={<ErrorPage/>}/>
         </Routes>
       </MenuHoverProvider>

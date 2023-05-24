@@ -12,6 +12,7 @@ import ModalNotFoundDT from "../Modal/ModalNotFoundDT";
 const ResultExam = () => {
   const [isloading, setIsLoading] = useState(false);
   const [isDTFound,setisDTFound] = useState(false)
+ 
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,6 +30,13 @@ const ResultExam = () => {
 
   const searchDigitalTicket = async (data) => {
     const response = await getUserByAppNumber(data.numberDT);
+    
+    const userDataStorage = sessionStorage.getItem("user")
+
+    if(response.fields !== userDataStorage){
+      sessionStorage.setItem('user',JSON.stringify(response))
+    }
+    
     if (response.find === false) {
       setisDTFound(true)
     } else {
@@ -38,6 +46,7 @@ const ResultExam = () => {
         setIsLoading(false);
       }, 3000);
     }
+
     reset();
   };
 

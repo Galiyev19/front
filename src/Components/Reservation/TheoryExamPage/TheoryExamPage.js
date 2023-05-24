@@ -11,11 +11,15 @@ import { setData } from "../../../store/slices/ReservationTheoryData";
 import { setDataUser } from "../../../store/slices/userDataSlice";
 
 
+import {IoIosArrowBack} from 'react-icons/io'
+
 import "./TheoryExamPage.css";
+import { useNavigate } from "react-router";
 
 const TheoryExamPage= () => {
   // TRANSLATE
   const { t } = useTranslation();
+  const navigate = useNavigate()
 
   const [search, setSearch] = useState(false);
   const [isloading, setIsLoading] = useState(false);
@@ -35,6 +39,10 @@ const TheoryExamPage= () => {
     IIN: "",
     mode: "onChange",
   });
+
+  const goBack = () => {
+    navigate('/reservation/theory-exam')
+  }
 
   const getUserData = async (data) => {
     const username = "admin"; 
@@ -60,12 +68,13 @@ const TheoryExamPage= () => {
         }
       })
       .then((data) => {
-        if(data[0]?.fields?.statusT === true){
-          setIsReserv(true)
-        }else{
-          setSearch(true);
-          dispatch(setDataUser(data[0]));
-        }
+        // if(data[0]?.fields?.statusT === true){
+        //   setIsReserv(true)
+        // }else{
+        //   setSearch(true);
+        // }
+          dispatch(setDataUser(data));
+        setSearch(true)
       })
       .catch((error) => {
         setSearch(false);
@@ -93,15 +102,21 @@ const TheoryExamPage= () => {
         <h2 className="header_text_theory_exam_form">
           {t("titlePageTheoryExam")}
         </h2>
+        <div className="d-flex w-100">
+        <button className="btn_back" onClick={() => navigate(-1)}>
+          <IoIosArrowBack/>
+          назад
+        </button>
+      </div>
         {!search ? (
           <form
-            className="d-flex align-items-center justify-content-center flex-column w-100 mt-3"
+            className="form_input"
             onSubmit={handleSubmit(submit)}
           >
             <p className="text-center">{t("head_text_input")}</p>
             {/* INPUT TICKET */}
             <input
-              className="form-control w-50 my-2"
+              className="form-control input_w my-2"
               placeholder={t("head_text_input")}
               maxLength="12"
               minLength="12"
@@ -119,7 +134,7 @@ const TheoryExamPage= () => {
             {isUser && <p className="text-danger">Неверный цифровой талон</p>}
             {/* SUBMIT BUTTON */}
             <button
-              className="btn btn-success w-25 my-2"
+              className="btn btn-success my-2 btn_width"
               type="submit"
               disabled={!isDirty || !isValid}
             >

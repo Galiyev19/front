@@ -47,7 +47,7 @@ i18n
                 titlePageTheoryExam: "БРОНИРОВАТЬ ОЧЕРЕДЬ ДЛЯ СДАЧИ ТЕОРЕТИЧЕСКОГО ЭКЗАМЕНА",
                 titlePagePracticeExam: "БРОНИРОВАТЬ ОЧЕРЕДЬ ДЛЯ СДАЧИ ПРАКТИЧЕСКОГО ЭКЗАМЕНА",
                 btn_title_reservation: "Забронировать",
-                head_text_input: "Введите номер ЦТ"
+                head_text_input: "Введите ИИН"
         },
       },
       kz: {
@@ -82,7 +82,7 @@ i18n
             titlePageTheoryExam: "ТЕОРИЯЛЫҚ ЕМТИХАН ӨТУ ҮШІН КЕЗЕГІН БРОНДАУ",
             titlePagePracticeExam: "ПРАКТИКАЛЫҚ ЕМТИХАН ӨТУ ҮШІН КЕЗЕГІН БРОНДАУ",
             btn_title_reservation: "Брондау",
-            head_text_input: "Cандық талон нөмерін енгізіңіз"
+            head_text_input: "ЖСН-ді енгізіңіз"
         },
       },
     },

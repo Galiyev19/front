@@ -47,6 +47,17 @@
 }
 
 
+.btn_back{
+  outline: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.btn_back:hover{
+  color: #36975a;
+}
+
 @media (max-width: 992px) {
   .link_btn_resev_exam{
     flex-direction: column;
@@ -85,9 +96,9 @@
 
 @media (max-width: 576px) {
   .offset_reservation{
-    height: 80vh;
-    align-items: center;
-    justify-content: center;
+    height: 60vh;
+    /* align-items: center;
+    justify-content: center; */
   }
 
   .link_btn_resev_exam{
