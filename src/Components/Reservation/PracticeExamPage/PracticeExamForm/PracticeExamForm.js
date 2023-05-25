@@ -90,8 +90,8 @@ const PracticeExamForm = ({ isReserv }) => {
     const password = "admin";
 
     const id = id_depart;
-    const categoryName = userData?.fields.category;
-    const kpp = "AT";
+    const categoryName = userData.category;
+    const kpp = userData.kpp;
 
     fetch(url, {
       headers: {
@@ -184,7 +184,8 @@ const PracticeExamForm = ({ isReserv }) => {
   useEffect(() => {
     const todayDate = new Date().toISOString().slice(0, 10);
     setToday(todayDate);
-  }, [idDepartment, dateList]);
+    getFreeExamPractice(userData.department_code)
+  }, []);
 
   return (
     <div className="form_input_date_item">

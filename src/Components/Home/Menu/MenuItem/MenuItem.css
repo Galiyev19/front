@@ -46,7 +46,8 @@
     justify-content: space-between;
     cursor: pointer;
     padding: 16px 15%;
-    animation: slideDown 1s ease-in-out forwards;
+    /* transition: .3s; */
+    animation: slideDown .8s ease-in-out forwards;
     transform-origin: center bottom;
 
 }
@@ -71,13 +72,13 @@
 @keyframes slideDown {
     0% { 
       opacity: 0;
-      transform: translateY(24px)
+      /* transform: translateY(24px) */
     }
 
   
     100% {
       opacity: 1;
-      transform: translateY(0px)
+      /* transform: translateY(0px) */
     }
     
   }

@@ -148,3 +148,16 @@ export const getUserByAppNumber = async (id) => {
 
   return result;
 };
+
+export const verifyUserByIIN =  async (iin) => {
+  const url = ""
+  const username = "admin"
+  const password = "admin"
+
+  const respoonse = await fetch(url + iin, {
+    header: {
+
+    },
+    method: "GET"
+  })
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 import TheoryExamForm from "./TheoryExamForm/TheoryExamForm";
 import ModalLoading from "../ModalLoading/ModalLoading";
@@ -9,27 +10,27 @@ import ModalTheoryExam from "../../Modal/ModalTheoryExam";
 
 import { setData } from "../../../store/slices/ReservationTheoryData";
 import { setDataUser } from "../../../store/slices/userDataSlice";
+import { IoIosArrowBack } from "react-icons/io";
 
-
-import {IoIosArrowBack} from 'react-icons/io'
+import ReactCountdownClock from "react-countdown-clock";
 
 import "./TheoryExamPage.css";
-import { useNavigate } from "react-router";
 
-const TheoryExamPage= () => {
+const TheoryExamPage = () => {
   // TRANSLATE
   const { t } = useTranslation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState(false);
   const [isloading, setIsLoading] = useState(false);
   const [isUser, setIsUser] = useState(false);
-  const [isReserv, setIsReserv] = useState(false)
+  const [isReserv, setIsReserv] = useState(false);
+  const [messageBlock, setMessageBlock] = useState(false);
 
   // const data = useSelector((state) => state.data.data);
   const dispatch = useDispatch();
 
-
+  const userData = useSelector((state) => state.userData.userData);
   const {
     register,
     handleSubmit,
@@ -42,13 +43,12 @@ const TheoryExamPage= () => {
   });
 
   const goBack = () => {
-    navigate('/reservation/theory-exam')
-  }
+    navigate("/reservation/theory-exam");
+  };
 
   const getUserData = async (data) => {
-    const username = "admin"; 
-    const password = "admin"; 
-
+    const username = "admin";
+    const password = "admin";
 
     fetch(`/api/search/applicant/${data.IIN}`, {
       method: "GET",
@@ -68,32 +68,32 @@ const TheoryExamPage= () => {
         }
       })
       .then((data) => {
-        if(data !== []){
-          dispatch(setDataUser(data));
-          setSearch(true)
-        }else  if(data.statusT === true){
-          setIsReserv(true)
-        } else if (data.find === false){
+        if (data.find === false) {
           setIsUser(true);
+          setSearch(false);
+        } else if (data.statusT === true && data.statusP === false) {
+          setIsReserv(true);
+        } else {
+          dispatch(setDataUser(data));
+          setSearch(true);
         }
 
-       console.log(data)
+        console.log(data);
       })
       .catch((error) => {
         // setSearch(false);
       });
   };
 
-  
   // SEARCH TICKET SUBMIT BUTTON
   const submit = (data) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-
-    getUserData(data);
-    reset();
+    // setIsLoading(true);
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 500);
+    // getUserData(data);
+    // reset();
+    setMessageBlock(true);
   };
 
   useEffect(() => {}, []);
@@ -105,14 +105,14 @@ const TheoryExamPage= () => {
           {t("titlePageTheoryExam")}
         </h2>
         <div className="d-flex w-100">
-        <button className="btn_back" onClick={() => navigate(-1)}>
-          <IoIosArrowBack/>
-          назад
-        </button>
-      </div>
+          <button className="btn_back" onClick={() => navigate(-1)}>
+            <IoIosArrowBack />
+            назад
+          </button>
+        </div>
         {!search ? (
           <form
-            className="form_input"
+            className={messageBlock ? "hide" : "form_input"}
             onSubmit={handleSubmit(submit)}
           >
             <p className="text-center">{t("head_text_input")}</p>
@@ -145,14 +145,32 @@ const TheoryExamPage= () => {
           </form>
         ) : (
           <div className="d-flex w-100 text-start align-items-center justify-content-center">
-            <TheoryExamForm isReserv={isReserv}/>
+            <TheoryExamForm isReserv={isReserv} />
+          </div>
+        )}
+        {messageBlock && (
+          <div className="d-flex flex-column align-items-center justify-content-center w-100 mt-3">
+            <input className="form-control w-50 mb-2" />
+            <div className="d-flex w-50 align-items-center justify-content-center w-100">
+              <ReactCountdownClock
+                seconds={120}
+                color="#F40"
+                alpha={1}
+                size={40}
+              />
+
+                <button className="btn btn-primary">
+                  Отправить снова
+                </button>
+                <button className="btn btn-success">Забронировать</button>
+            </div>
           </div>
         )}
       </div>
       {isloading && <ModalLoading isLoading={isloading} />}
-      <ModalTheoryExam isReserv={isReserv} setShow={setIsReserv}/>
+      <ModalTheoryExam isReserv={isReserv} setShow={setIsReserv} />
     </div>
   );
-}
+};
 
 export default TheoryExamPage;

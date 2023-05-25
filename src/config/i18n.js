@@ -46,7 +46,7 @@ i18n
                 btn_title_reservation_practce_exam: "Онлайн бронирование для сдачи практического экзамена",
                 titlePageTheoryExam: "БРОНИРОВАТЬ ОЧЕРЕДЬ ДЛЯ СДАЧИ ТЕОРЕТИЧЕСКОГО ЭКЗАМЕНА",
                 titlePagePracticeExam: "БРОНИРОВАТЬ ОЧЕРЕДЬ ДЛЯ СДАЧИ ПРАКТИЧЕСКОГО ЭКЗАМЕНА",
-                btn_title_reservation: "Забронировать",
+                btn_title_reservation: "Авторизоваться",
                 head_text_input: "Введите ИИН"
         },
       },

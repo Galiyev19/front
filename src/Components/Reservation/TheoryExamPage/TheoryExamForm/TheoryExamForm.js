@@ -119,11 +119,11 @@ const TheoryExamForm = () => {
         }
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         const record = Object.values(res)[0];
         // console.log(record)
         setIsRecord(record);
-        console.log(isRecord)
+        console.log(isRecord);
         // setIsAdd(res)
         // sessionStorage.setItem('isAdd',res.enrolled)
       })
@@ -151,13 +151,15 @@ const TheoryExamForm = () => {
     setLoading(true);
 
     //TIME FOR ANIMATION LOADING
-      // setTimeout(() => {
-      //   setLoading(false);
-      // }, 500);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
 
-      if(isRecord === false){
-        navigate("/reservation/theory-exam/ticket");
-      }
+    if (isRecord) {
+      navigate("/reservation/theory-exam/ticket");
+    } else {
+      setIsRecord(true);
+    }
 
     reset();
   };
@@ -187,7 +189,9 @@ const TheoryExamForm = () => {
       <div className="form-control my-4 ">
         <UserDataView />
       </div>
-      <div className="w-100 d-flex text-center">{isRecord && <h2 className="text-danger">Вы уже записаны</h2>}</div>
+      <div className="w-100 d-flex text-center">
+        {isRecord && <h2 className="text-danger">Вы уже записаны</h2>}
+      </div>
       <form
         className="d-flex w-100 flex-column"
         onSubmit={handleSubmit(handleSubmitTheoryExam)}
@@ -273,7 +277,7 @@ const TheoryExamForm = () => {
           </button>
         </div>
       </form>
-      
+
       {loading && <ModalLoading isLoading={loading} />}
     </div>
   );
