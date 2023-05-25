@@ -14,13 +14,6 @@ const ModalPracticeError = ({isTheoryResModal,setShow}) => {
         <Modal.Title>Ошибка</Modal.Title>
       </Modal.Header>
       <Modal.Body>Вы не прошли теоритический экзамен.</Modal.Body>
-      <Modal.Footer>
-        <Link to="/reservation/theory-exam">
-            <Button>
-               Перейти на страницу по запису на теоритический экзамен
-            </Button>
-        </Link>
-      </Modal.Footer>
     </Modal>
   );
 };

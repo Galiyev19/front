@@ -9,12 +9,14 @@ import { setDataUser } from "../../../store/slices/userDataSlice";
 
 import ModalPracticeError from "../../Modal/ModalPracticeError";
 import ModalCongratPractice from "../../Modal/ModalCongratPractice";
-import  ReactCountdownClock  from "react-countdown-clock";
+import ReactCountdownClock from "react-countdown-clock";
 
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router";
-import {verifyUserByIIN,verifySMSCode} from "../../../helpers/ApiRequestList"
-
+import {
+  verifyUserByIIN,
+  verifySMSCode,
+} from "../../../helpers/ApiRequestList";
 
 const PracticeExamPage = () => {
   const { t } = useTranslation();
@@ -27,8 +29,8 @@ const PracticeExamPage = () => {
   const [congartModal, setCongartModal] = useState(false);
   const [isTheoryResModal, setIsTheoryResModal] = useState(false);
   const [messageBlock, setMessageBlock] = useState(false);
-  const [seconds,setSeconds] = useState(180)
-  const [disBtn,setDisBtn] = useState(false);
+  const [seconds, setSeconds] = useState(180);
+  const [disBtn, setDisBtn] = useState(false);
 
   const {
     register,
@@ -39,18 +41,18 @@ const PracticeExamPage = () => {
   } = useForm({
     IIN: "",
     mode: "onChange",
-    message: ""
+    message: "",
   });
 
   const dispatch = useDispatch();
 
-  const getUserData = async (data) => {
+  const getUserData = async (iin) => {
     const username = "admin";
     const password = "admin";
 
-    console.log(data.IIN);
+    // console.log(iin);
 
-    fetch(`/api/search/applicant/${data.IIN}`, {
+    fetch(`/api/search/applicant/${iin}`, {
       method: "GET",
       headers: {
         Authorization: "Basic " + btoa(username + ":" + password),
@@ -69,17 +71,11 @@ const PracticeExamPage = () => {
         }
       })
       .then((data) => {
-        if (data.find === false) {
-          setIsUser(true);
-          setSearch(false);
-        } else if (data.statusP === true && data.statusT === true) {
-          setCongartModal(true);
-        } else if (data.statusT === false) {
-          setIsTheoryResModal(true);
-        } else {
-          dispatch(setDataUser(data));
-          setSearch(true);
+        if(data.error){
+          setIsUser(true)
         }
+        dispatch(setDataUser(data));
+        setMessageBlock(true);
       })
       .catch((error) => {
         setIsUser(true);
@@ -88,54 +84,59 @@ const PracticeExamPage = () => {
       });
   };
 
-  const verivyUser = async (id) => {
-    const response = await verifyUserByIIN(id)
-    sessionStorage.setItem("user",JSON.stringify(response))
-  }
+  const verifyUser = async (iin) => {
+    // const response = await verifyUserByIIN(iin);
+    sessionStorage.setItem("iin", JSON.stringify(iin));
+    setMessageBlock(true)
+  };
 
+  // IF THE TIMER IS OUT OF TIME
   const timeDone = () => {
     setDisBtn(true);
     // setMessageBlock(false);
-    reset();
-  }
+  };
 
+  // SEND SMS CODE AGAIN
   const SendMessageAgain = () => {
-    setDisBtn(false)
-    setSeconds(seconds => seconds+=10)
-  }
+    setDisBtn(false);
+    setSeconds((seconds) => (seconds += 10));
+  };
 
+  //SEND IIN AND VERIFY WITH SMS
   const getMessage = (data) => {
-    setMessageBlock(true);
-    verivyUser(data.IIN)
-  }
+    // getUserData(data.IIN);
+    verifyUser(data.IIN);
+  };
 
-
+  //AFTER INPUT SMS CODE
   const submit = (data) => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
 
-    getUserData(data);
+    setSearch(true);
+    // getUserData(data);
     reset();
 
-    setMessageBlock(false)
-    const storageData = sessionStorage.getItem("user")
-    const obj  = {
-      iin: storageData.iin,
-      sms_code: data.message
-    }
-    verifySMSCode(obj)
+    setMessageBlock(false);
+
+    const storageData = sessionStorage.getItem("iin");
+    
+    const obj = {
+      iin: JSON.parse(storageData),
+      sms_code: data.message,
+    };
+
+    verifySMSCode(obj);
   };
 
-  useEffect(() => {}, [search, isReserv,seconds]);
+  useEffect(() => {}, [search, isReserv, seconds]);
 
   return (
     <div className="offset_theory_exam_page flex-column">
       <div className="d-flex w-100 text-center flex-column mt-4">
-        <h2>
-          {t("titlePagePracticeExam")}
-        </h2>
+        <h2>{t("titlePagePracticeExam")}</h2>
       </div>
       <div className="d-flex w-100">
         <button className="btn_back" onClick={() => navigate(-1)}>
@@ -145,7 +146,10 @@ const PracticeExamPage = () => {
       </div>
       <div className="d-flex w-100 text-start align-items-center justify-content-center">
         {!search ? (
-          <form className={messageBlock ? "hide" : "form_input"} onSubmit={handleSubmit(getMessage)}>
+          <form
+            className={messageBlock ? "hide" : "form_input"}
+            onSubmit={handleSubmit(getMessage)}
+          >
             <p className="text-center">{t("head_text_input")}</p>
             {/* INPUT TICKET */}
             <input
@@ -155,7 +159,7 @@ const PracticeExamPage = () => {
               minLength="12"
               name="IIN"
               {...register("IIN", {
-                required: "Введите код",
+                required: "Введите ИИН",
                 pattern: {
                   value: /^[0-9]+$/,
                   message: "КОД состоит только из цифр",
@@ -165,7 +169,9 @@ const PracticeExamPage = () => {
             {/* ERRORS FOR INPUT */}
             {errors.IIN && <p className="text-danger">{errors.IIN.message}</p>}
             {/* ERROR NOT FOUND TICKTET */}
-            {isUser && <p className="text-danger">Неверный цифровой талон</p>}
+            {isUser && (
+              <p className="text-danger">Заявитель с таким ИИН не найден.</p>
+            )}
             {/* ERROR IF USER BOOKIG FOR PRACTICE EXAM */}
 
             {/* SUBMIT BUTTON */}
@@ -184,21 +190,41 @@ const PracticeExamPage = () => {
         )}
       </div>
       {messageBlock && (
-        <form  className="d-flex flex-wrap flex-column align-items-center justify-content-center w-100 mt-3"
-        onSubmit={handleSubmit(submit)}
+        <form
+          className="d-flex flex-wrap flex-column align-items-center justify-content-center w-100 mt-3"
+          onSubmit={handleSubmit(submit)}
         >
-          <p>На ваш номер был отправлен код.Введите его ниже</p>
-          <input className="form-control w-50 mb-2"  maxLength="6"
-              minLength="6"
-              name="IIN"
-              {...register("message", {
-                required: "Введите или номер завки",
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: "ИИН состоит только из цифр",
-                },
-              })} />
-          <div className="d-flex w-50 align-items-center justify-content-center w-100">
+          <p className="px-3 text-center">
+            Введите отправленный на ваш телефонный номер код.
+          </p>
+          <input
+            className="form-control w-50 mb-2"
+            maxLength="6"
+            minLength="6"
+            name="IIN"
+            {...register("message", {
+              required: "Введите или номер завки",
+              pattern: {
+                value: /^[0-9]+$/,
+                message: "ИИН состоит только из цифр",
+              },
+            })}
+          />
+          <div className="d-flex flex-column w-50 align-items-center justify-content-center w-100 mt-3">
+            <button
+              className="btn btn-success mb-5"
+              type="submit"
+              disabled={disBtn}
+            >
+              Забронировать
+            </button>
+            <button
+              className="btn mb-3 btn-light"
+              onClick={() => SendMessageAgain()}
+              disabled={!disBtn}
+            >
+              Отправить код повторно
+            </button>
             <ReactCountdownClock
               seconds={seconds}
               color="#6c757d"
@@ -206,9 +232,6 @@ const PracticeExamPage = () => {
               size={48}
               onComplete={timeDone}
             />
-
-            <button className="btn btn-secondary mx-2" onClick={() => SendMessageAgain()} disabled={!disBtn}>Отправить снова</button>
-            <button className="btn btn-success mx-2" type="submit" disabled={disBtn} >Забронировать</button>
           </div>
         </form>
       )}

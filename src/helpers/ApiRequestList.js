@@ -189,6 +189,19 @@ export const verifySMSCode =  async (obj) => {
     },
     method: "POST",
     body: JSON.stringify(obj),
+  }).then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(`Request failed with status code ${response.status}`);
+    }
   })
+  .then((data) => {
+    console.log(data);
+    return data;
+  })
+  .catch(function (res) {
+    console.log(res);
+  });
 
 }

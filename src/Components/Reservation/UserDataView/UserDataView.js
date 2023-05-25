@@ -9,25 +9,19 @@ export default function UserDataView() {
   }, []);
 
   return (
-    <div className="d-flex flex-column my-2">
-      <p className="ticket_text_aside">
-        ФИО: <span className="fw-bold">{user?.fullname}</span>
-      </p>
+    <div className="d-flex w-100 flex-column my-2">
       <p className="ticket_text_aside">
         ИИН: <span className="fw-bold">{user?.iin}</span>
       </p>
       <p className="ticket_text_aside">
-        Тип услуги: <span className="fw-bold">{user?.service}</span>
+        Город: <span className="fw-bold">{user?.city}</span>
       </p>
       <p className="ticket_text_aside">
-        КПП: <span className="fw-bold">{user?.kpp}</span>
+        Отделение: <span className="fw-bold">{user?.department}</span>
       </p>
-      {
-      user?.statusT ?
       <p className="ticket_text_aside">
-        Теоретический экзамен: <span className="fw-bold">Успешно сдан</span>
-      </p> : null
-      }
+        Категория: <span className="fw-bold">{user?.category}</span>
+      </p>
     </div>
   );
 }
