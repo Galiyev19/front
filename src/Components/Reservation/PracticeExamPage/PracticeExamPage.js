@@ -13,6 +13,8 @@ import  ReactCountdownClock  from "react-countdown-clock";
 
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router";
+import {verifyUserByIIN,verifySMSCode} from "../../../helpers/ApiRequestList"
+
 
 const PracticeExamPage = () => {
   const { t } = useTranslation();
@@ -25,7 +27,7 @@ const PracticeExamPage = () => {
   const [congartModal, setCongartModal] = useState(false);
   const [isTheoryResModal, setIsTheoryResModal] = useState(false);
   const [messageBlock, setMessageBlock] = useState(false);
-  const [seconds,setSeconds] = useState(120)
+  const [seconds,setSeconds] = useState(180)
   const [disBtn,setDisBtn] = useState(false);
 
   const {
@@ -86,14 +88,25 @@ const PracticeExamPage = () => {
       });
   };
 
+  const verivyUser = async (id) => {
+    const response = await verifyUserByIIN(id)
+    sessionStorage.setItem("user",JSON.stringify(response))
+  }
+
   const timeDone = () => {
     setDisBtn(true);
-    setMessageBlock(false);
+    // setMessageBlock(false);
     reset();
   }
 
-  const sendMessage = () => {
-    setMessageBlock(true)
+  const SendMessageAgain = () => {
+    setDisBtn(false)
+    setSeconds(seconds => seconds+=10)
+  }
+
+  const getMessage = (data) => {
+    setMessageBlock(true);
+    verivyUser(data.IIN)
   }
 
 
@@ -107,7 +120,12 @@ const PracticeExamPage = () => {
     reset();
 
     setMessageBlock(false)
-   
+    const storageData = sessionStorage.getItem("user")
+    const obj  = {
+      iin: storageData.iin,
+      sms_code: data.message
+    }
+    verifySMSCode(obj)
   };
 
   useEffect(() => {}, [search, isReserv,seconds]);
@@ -115,7 +133,7 @@ const PracticeExamPage = () => {
   return (
     <div className="offset_theory_exam_page flex-column">
       <div className="d-flex w-100 text-center flex-column mt-4">
-        <h2 className="header_text_theory_exam_form">
+        <h2>
           {t("titlePagePracticeExam")}
         </h2>
       </div>
@@ -127,12 +145,12 @@ const PracticeExamPage = () => {
       </div>
       <div className="d-flex w-100 text-start align-items-center justify-content-center">
         {!search ? (
-          <form className={messageBlock ? "hide" : "form_input"} onSubmit={handleSubmit(sendMessage)}>
+          <form className={messageBlock ? "hide" : "form_input"} onSubmit={handleSubmit(getMessage)}>
             <p className="text-center">{t("head_text_input")}</p>
             {/* INPUT TICKET */}
             <input
               className="form-control input_w my-2"
-              placeholder={t("head_text_input")}
+              placeholder="Введите ИИН"
               maxLength="12"
               minLength="12"
               name="IIN"
@@ -183,14 +201,14 @@ const PracticeExamPage = () => {
           <div className="d-flex w-50 align-items-center justify-content-center w-100">
             <ReactCountdownClock
               seconds={seconds}
-              color="#36975a"
-              alpha={1.3}
+              color="#6c757d"
+              alpha={2}
               size={48}
               onComplete={timeDone}
             />
 
-            {/* <button className="btn btn-primary mx-2" onClick={() => SendMessageAgain()} disabled={!disBtn}>Отправить снова</button> */}
-            <button className="btn btn-success mx-2" type="submit" >Забронировать</button>
+            <button className="btn btn-secondary mx-2" onClick={() => SendMessageAgain()} disabled={!disBtn}>Отправить снова</button>
+            <button className="btn btn-success mx-2" type="submit" disabled={disBtn} >Забронировать</button>
           </div>
         </form>
       )}

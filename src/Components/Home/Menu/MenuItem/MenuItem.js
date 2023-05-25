@@ -27,24 +27,26 @@ export default function MenuItem({ menu }) {
   
 
   return (
+    <Link to={menu.link}>
     <div
       className={hovered ? "menu_item_hover" : "menu_item"}
       style={{ backgroundColor: menu.menu_bg_color }}
       onMouseEnter={(e) => mouseEnter(e)}
       onMouseLeave={(e) => onMouseLeave(e)}
     >
-      <Link
-        to={menu.link}
+      <div
+        
         className={hovered ? "header_text " : "menu_item_text "}
         style={{ color: menu.color_text }}
       >
         {menu.menu_name}
-      </Link>
+      </div>
       <img
         src={menu.menu_img}
         className={hovered ? "menu_img_block" : "menu_img"}
         alt={menu.menu_name}
       />
     </div>
+    </Link>
   );
 }
