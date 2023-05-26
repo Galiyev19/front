@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 export default function TicketPracticeExam() {
   const [user, setUser] = useState(null);
   const [date, setDate] = useState(null);
-  const [department, setDepartment] = useState(null);
+
 
   useEffect(() => {
     const user = sessionStorage.getItem("user");
@@ -11,9 +11,6 @@ export default function TicketPracticeExam() {
     const date = sessionStorage.getItem("date")
     setDate(JSON.parse(date))
     console.log(date)
-    const obj = sessionStorage.getItem("department")
-    const departament = JSON.parse(obj)
-    setDepartment(departament[0])
   }, []);
 
   return (
@@ -35,10 +32,23 @@ export default function TicketPracticeExam() {
         <label className="my-2">
           <span className="ticket_text_aside">
             Адрес СпеЦОНa: <span className="fw-bold">
-            <span className="fw-bold">{department?.name}</span>
+            <span className="fw-bold">{user?.department}</span>
             </span>
           </span>
-          <span>{}</span>
+        </label>
+        <label className="my-2">
+          <span className="ticket_text_aside">
+            Категория: <span className="fw-bold">
+            <span className="fw-bold">{user?.category}</span>
+            </span>
+          </span>
+        </label>
+        <label className="my-2">
+          <span className="ticket_text_aside">
+            КПП: <span className="fw-bold">
+            <span className="fw-bold">{user?.kpp}</span>
+            </span>
+          </span>
         </label>
         <label className="my-2">
           <span className="ticket_text_aside">

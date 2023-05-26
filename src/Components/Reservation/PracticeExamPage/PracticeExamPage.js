@@ -22,7 +22,7 @@ const PracticeExamPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState(true);
   const [isloading, setIsLoading] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isReserv, setIsReserv] = useState(false);
@@ -88,10 +88,13 @@ const PracticeExamPage = () => {
   //SEND IIN TO DATABASE TO VERIFY USER
   const verifyUser = async (iin) => {
     const response = await verifyUserByIIN(iin);
+    //APPLICANT FIND IN DATABASE
     if (response.success) {
       sessionStorage.setItem("iin", JSON.stringify(iin));
       setMessageBlock(true);
-    } else {
+    } 
+    //APLICANT NOT FOUND
+    else {
       isUser(true);
     }
   };
@@ -105,11 +108,17 @@ const PracticeExamPage = () => {
     };
 
     const response = await verifySMSCode(obj);
+
+    // APLICANT NOT PASS EXAM 
     if (response.error) {
       setNotPassExam(true);
-    } else if (response.success === false) {
+    }
+    //APLICANT INPUT WRONG VERIFY CODE
+    else if (response.success === false) {
       setIsWrongCode(true);
-    }else{
+    }
+    //OK
+    else{
       setNotPassExam(false)
       setSearch(true);
       setDataUser(response);
@@ -125,6 +134,7 @@ const PracticeExamPage = () => {
   // SEND SMS CODE AGAIN
   const SendMessageAgain = () => {
     setDisBtn(false);
+    //RESTART TIMER
     setSeconds((seconds) => (seconds += 10));
   };
 

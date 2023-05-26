@@ -21,6 +21,7 @@ const PracticeExamForm = ({ isReserv }) => {
   const [examId, setExamId] = useState(null);
   const [kpp,setKPP] = useState("")
   const [errorText, setErrorText] = useState("");
+  const [notTheoryExam,setNotTheoryExam] = useState("")
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -118,6 +119,8 @@ const PracticeExamForm = ({ isReserv }) => {
       });
   };
 
+
+  //POST DATA TO SERVER AFTER CHOISE APPLICANT DATE AND TIME
   const postUserExamData = (user_exam_data) => {
     const url = "/api/practice/enroll/queue/";
     const username = "admin";
@@ -143,11 +146,14 @@ const PracticeExamForm = ({ isReserv }) => {
         }
       })
       .then((res) => {
-        // console.log(res);
+        if(res.enrolled) {
+          navigate("/reservation/practice-exam/ticket");
+        }else if(res.error){
+          setNotTheoryExam(res.error)
+        }
       })
       .catch(function (res) {
         setErrorText(res);
-        console.log(res);
       });
   };
 
@@ -163,7 +169,6 @@ const PracticeExamForm = ({ isReserv }) => {
 
     setTimeout(() => {
       setLoading(false);
-      navigate("/reservation/theory-exam/ticket");
     }, 500);
   };
 
@@ -180,6 +185,10 @@ const PracticeExamForm = ({ isReserv }) => {
       <div className="d-flex align-items-start justify-content-center form-control my-4 ">
         <UserDataView />
       </div>
+      <h2>{errorText}</h2>
+      {
+        notTheoryExam.length !== 0 ? <h2>{notTheoryExam}</h2> : null 
+      }
       <form
         onSubmit={handleSubmit(handleSubmitPraticeExam)}
         className="d-flex flex-column w-100"
@@ -246,7 +255,6 @@ const PracticeExamForm = ({ isReserv }) => {
           </button>
         </div>
       </form>
-      <h2>{errorText}</h2>
       {loading && <ModalLoading isLoading={loading} />}
     </div>
   );
