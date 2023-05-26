@@ -115,21 +115,18 @@ const TheoryExamForm = () => {
         } else {
           setErrorText(response.status);
           throw new Error(`Request failed with status code ${response.status}`);
-          // console.log(response)
         }
       })
       .then((res) => {
         console.log(res);
         const record = Object.values(res)[0];
-        // console.log(record)
         setIsRecord(record);
-        console.log(isRecord);
         // setIsAdd(res)
         // sessionStorage.setItem('isAdd',res.enrolled)
       })
       .catch(function (res) {
         // setErrorText(res);
-        console.log(res);
+      
       });
   };
 

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { Link } from "react-router-dom";
-// import { MenuHoverContext } from "../../../../Context/Context";
+import { MenuHoverContext } from "../../../../Context/Context";
 
 import "./MenuItem.css";
 
 export default function MenuItem({ menu }) {
-  // const { isHover, setIsHover } = useContext(MenuHoverContext);
+  // const { isHover, setIsHover } = useContext(MenuHoverContext);s
   const [hovered, setHovered] = useState(false);
 
   //Mouse enter event listener

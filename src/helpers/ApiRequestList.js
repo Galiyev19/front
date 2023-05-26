@@ -95,7 +95,6 @@ export const getFreeExamPractice = async (id, categoryName, kpp) => {
     category: categoryName,
     kpp: kpp,
   };
-  console.log(test);
 
   fetch(`/api/practice/free/exams/`, {
     method: "POST",
@@ -116,11 +115,10 @@ export const getFreeExamPractice = async (id, categoryName, kpp) => {
       }
     })
     .then((data) => {
-      console.log(data);
       return data;
     })
     .catch(function (res) {
-      console.log(res);
+       return res
     });
 };
 
@@ -181,7 +179,7 @@ export const verifySMSCode =  async (obj) => {
   const username = "admin"
   const password = "admin"
 
-  const response = await fetch(url, {
+  fetch(url, {
     header: {
       Authorization: "Basic " + btoa(username + ":" + password),
       "Access-Control-Allow-Headers": "Content-Type",
@@ -199,11 +197,10 @@ export const verifySMSCode =  async (obj) => {
     }
   })
   .then((data) => {
-    console.log(data);
     return data;
   })
   .catch(function (res) {
-    console.log(res);
+    return res
   });
 
 }

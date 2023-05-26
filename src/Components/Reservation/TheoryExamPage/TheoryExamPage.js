@@ -78,7 +78,7 @@ const TheoryExamPage = () => {
           setSearch(true);
         }
 
-        console.log(data);
+        
       })
       .catch((error) => {
         // setSearch(false);

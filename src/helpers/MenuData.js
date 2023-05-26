@@ -4,13 +4,13 @@ import  booking from '../assets/images/booking.jpeg'
 import pdd from '../assets/images/pdd.jpeg'
 import res_exam from '../assets/images/res_exam.jpeg'
 
-import test from '../../build/static/media/booking.cf64fe159cc29c9329e6.jpeg'
+
 // MENU DATA
 const menu = [
     {
       id: 1,
       menu_name: "Электронное бронирование",
-      menu_img: test,
+      menu_img: booking,
       menu_bg_color: "#FEFEFE",
       link: "reservation"
     },

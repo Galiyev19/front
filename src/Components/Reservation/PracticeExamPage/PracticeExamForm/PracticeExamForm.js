@@ -9,26 +9,35 @@ import UserDataView from "../../UserDataView/UserDataView";
 import ModalLoading from "../../ModalLoading/ModalLoading";
 import { setDataUser } from "../../../../store/slices/userDataSlice";
 
-const PracticeExamForm = ({ isReserv }) => {
+const PracticeExamForm = () => {
+  //LOADING ANIMATION 
   const [loading, setLoading] = useState(false);
+  //SET TODAY DATE FOR DATEPICKER
   const [today, setToday] = useState(null);
 
-
+  //IF DATE IN THIS DAY NOT EXAMS
   const [dateError, setDateError] = useState(false);
+  // DATE FREE EXAM LIST FOR PRACTICE
   const [dateList, setDateList] = useState([]);
+  // APPLICANT SELECTED DATE
   const [date, setDate] = useState("");
+  //APPLICANT SELECTED TIME
   const [time, setTime] = useState(null);
+  //SET EXAMID 
   const [examId, setExamId] = useState(null);
+  //SELECTED KPP IF APPLICANT HAVE CATEGORY "B"
   const [kpp,setKPP] = useState("")
+  //SET ERROR WHEN SEND DATA AND TIME FOR RESERVATION
   const [errorText, setErrorText] = useState("");
-  const [notTheoryExam,setNotTheoryExam] = useState("")
+  //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
+  const [notTheoryExam,setNotTheoryExam] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const userData = useSelector((state) => state.userData.userData);
+
+  //GET APPLICANT INFO FROM REDUX
+  const userData = useSelector((state) => state.userData.userData);
   
-  
- 
   const {
     register,
     handleSubmit,
@@ -81,7 +90,7 @@ const PracticeExamForm = ({ isReserv }) => {
     const id = id_depart;
     const categoryName = userData.category;
     const kpp = userData.kpp === "Автомат" ? "автомат" : "механика";
-    console.log(kpp)
+  
     fetch(url, {
       headers: {
         Authorization: "Basic " + btoa(username + ":" + password),
@@ -105,7 +114,6 @@ const PracticeExamForm = ({ isReserv }) => {
         }
       })
       .then((data) => {
-        console.log(data);
         if (data.length === 0) {
           setDateError(true);
           setDateList(data);
@@ -115,7 +123,7 @@ const PracticeExamForm = ({ isReserv }) => {
         }
       })
       .catch(function (res) {
-        console.log(res);
+        
       });
   };
 
@@ -146,10 +154,13 @@ const PracticeExamForm = ({ isReserv }) => {
         }
       })
       .then((res) => {
+        //IF APPLICANT ENROLLED TO PRACTICE EXAM
         if(res.enrolled) {
           navigate("/reservation/practice-exam/ticket");
-        }else if(res.error){
-          setNotTheoryExam(res.error)
+        }
+        //APPLICANT NOT ENRLLED GET ERROR FROM SERVER
+        else if(res.error){
+          setNotTheoryExam(res.error);
         }
       })
       .catch(function (res) {
@@ -157,7 +168,7 @@ const PracticeExamForm = ({ isReserv }) => {
       });
   };
 
-  //SUBMIT
+  //APPLICANT SELECTED DATE AND TIME SEND DATA 
   const handleSubmitPraticeExam = () => {
     const obj = {
       user_id: userData.id,
@@ -167,13 +178,15 @@ const PracticeExamForm = ({ isReserv }) => {
     postUserExamData(obj);
     setLoading(true);
 
+    //LOADING ANIMATE
     setTimeout(() => {
       setLoading(false);
     }, 500);
+    reset()
   };
 
 
-  const userData = JSON.parse(sessionStorage.getItem("user"))
+  // const userData = JSON.parse(sessionStorage.getItem("user"))
   useEffect(() => {
     const todayDate = new Date().toISOString().slice(0, 10);
     setToday(todayDate);                              
@@ -182,10 +195,12 @@ const PracticeExamForm = ({ isReserv }) => {
 
   return (
     <div className="form_input_date_item">
+      {/* SHOW APPLICANT INFO */}
       <div className="d-flex align-items-start justify-content-center form-control my-4 ">
         <UserDataView />
       </div>
       <h2>{errorText}</h2>
+      {/* APPLICANT NOT PASS THEORY EXAM */}
       {
         notTheoryExam.length !== 0 ? <h2>{notTheoryExam}</h2> : null 
       }
@@ -193,6 +208,7 @@ const PracticeExamForm = ({ isReserv }) => {
         onSubmit={handleSubmit(handleSubmitPraticeExam)}
         className="d-flex flex-column w-100"
       >
+        {/* IF APPLICANT HAVE CATEGORY "B" */}
         {userData.kpp === "B" && (
           <>
             <p className="my-2 text-danger fs-3">
@@ -205,13 +221,14 @@ const PracticeExamForm = ({ isReserv }) => {
             </select>
           </>
         )}
-        {/* SELECT DATE */}
+        {/* ERROR */}
         {dateError ? (
           <p className="fs-5 my-2 text-danger">
             К сожалению в текущий день нету записей
           </p>
         ) : null}
 
+        {/* SELECT DATE */}
         <p className="my-2">Выберите дату</p>
         <input
           className="form-control "
@@ -222,9 +239,11 @@ const PracticeExamForm = ({ isReserv }) => {
           disabled={dateList.length === 0}
           onChange={(e) => onChangeSelectDate(e.target.value)}
         />
+        {/* ERROR*/}
         {errors?.selectDate && (
           <p className="error_text text-danger my-2">Выберите дату и время</p>
         )}
+        {/* ERROR */}
         {time?.length === 0 ? (
           <p className="fs-5 my-2 text-danger">
             К сожалению в текущий день нету записей
@@ -245,7 +264,7 @@ const PracticeExamForm = ({ isReserv }) => {
           ))}
         </select>
         <div className="d-flex align-items-center justify-content-center w-100 mt-3">
-          <button className="btn btn-danger mx-2">Отмена</button>
+          <button className="btn btn-danger mx-2" onClick={() => reset()}>Отмена</button>
           <button
             className="btn btn-success mx-2"
             type="submit"

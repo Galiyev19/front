@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 export default function UserDataView() {
   const [user, setUser] = useState(null);
   useEffect(() => {
+    //GET INFO ABOUT APPLICANT FROM STORAGE
     const userData = JSON.parse(sessionStorage.getItem("user"))
     setUser(userData)
-  
   }, []);
 
   return (

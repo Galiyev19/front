@@ -3,14 +3,21 @@ import React, { useEffect, useState } from "react";
 export default function TicketPracticeExam() {
   const [user, setUser] = useState(null);
   const [date, setDate] = useState(null);
+  const [time,setTime] = useState(null)
 
 
   useEffect(() => {
+    //GET INFO APPLICANT
     const user = sessionStorage.getItem("user");
     setUser(JSON.parse(user));
-    const date = sessionStorage.getItem("date")
-    setDate(JSON.parse(date))
-    console.log(date)
+    //GET DATE EXAM APPLICANT ENROLLED
+    const date = sessionStorage.getItem("date");;
+    setDate(JSON.parse(date));
+    //TRANSFORM TIME CUT SECONDS
+    const time = JSON.parse(date);
+    const [hours,minutes] = time.time.split(":");
+    const timeWithoutSeconds = `${hours}:${minutes}`;
+    setTime(timeWithoutSeconds)
   }, []);
 
   return (
@@ -59,12 +66,13 @@ export default function TicketPracticeExam() {
         </label>
         <div className="my-2 w-100">
           <span className="ticket_text_aside text-wrap">
-            Дата и время для сдачи <br /> теоритического экзамена:
+            Дата и время для сдачи <br /> практического экзамена:
           </span>
           <span className="fw-bold mx-2">
-            {new Date(date?.date).toLocaleDateString()},{date?.time}{" "}
+            {new Date(date?.date).toLocaleDateString()},{time}
           </span>
         </div>
+      <p className="text-center text-danger">Запишите или сфотографируйте талон</p>
       </div>
     </div>
   );

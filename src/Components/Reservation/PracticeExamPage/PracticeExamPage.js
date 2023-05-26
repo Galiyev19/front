@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 
+//COMPONENTS
 import ModalLoading from "../ModalLoading/ModalLoading";
 import PracticeExamForm from "./PracticeExamForm/PracticeExamForm";
-import { setDataUser } from "../../../store/slices/userDataSlice";
-
 import ModalPracticeError from "../../Modal/ModalPracticeError";
 import ModalCongratPractice from "../../Modal/ModalCongratPractice";
 import ReactCountdownClock from "react-countdown-clock";
 
+//REDUX
+import { setDataUser } from "../../../store/slices/userDataSlice";
+
+//ICON
 import { IoIosArrowBack } from "react-icons/io";
-import { useNavigate } from "react-router";
+
+//API REQUEST FUNCTION
 import {
   verifyUserByIIN,
   verifySMSCode,
@@ -22,23 +27,31 @@ const PracticeExamPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [search, setSearch] = useState(true);
+  //SHOW FORM SELECT DATE AND TIME FOR EXAM AFTER VERIFY APPLICANT
+  const [search, setSearch] = useState(false);
+  //SHOW LOADING ANIMATION MODAL
   const [isloading, setIsLoading] = useState(false);
+  //IF APPLICANT NOT FOUND SHOW ERROR
   const [isUser, setIsUser] = useState(false);
-  const [isReserv, setIsReserv] = useState(false);
+  
+  //SHOW MODALS
   const [congartModal, setCongartModal] = useState(false);
   const [isTheoryResModal, setIsTheoryResModal] = useState(false);
+
   const [messageBlock, setMessageBlock] = useState(false);
+  //SECONDS FOR TIMER
   const [seconds, setSeconds] = useState(180);
+  //FOR DISABLED BUTTON IF TIMER OUT OF TIME
   const [disBtn, setDisBtn] = useState(false);
+  //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
   const [notPassExam, setNotPassExam] = useState(false);
+  //SHOW ERROR IF APPLICANT INPUT WRONG VERIFY CODE
   const [isWrongCode, setIsWrongCode] = useState(false);
 
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors, isDirty, isValid },
   } = useForm({
     IIN: "",
@@ -48,44 +61,46 @@ const PracticeExamPage = () => {
 
   const dispatch = useDispatch();
 
-  const getUserData = async (iin) => {
-    const username = "admin";
-    const password = "admin";
+  //old code to get info applicant
+  // const getUserData = async (iin) => {
+  //   const username = "admin";
+  //   const password = "admin";
 
-    // console.log(iin);
-    fetch(`/api/search/applicant/${iin}`, {
-      method: "GET",
-      headers: {
-        Authorization: "Basic " + btoa(username + ":" + password),
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          setSearch(false);
-          return response.json();
-        } else {
-          throw new Error(`Request failed with status code ${response.status}`);
-        }
-      })
-      .then((data) => {
-        if (data.error) {
-          setIsUser(true);
-        }
-        dispatch(setDataUser(data));
-        setMessageBlock(true);
-      })
-      .catch((error) => {
-        setIsUser(true);
-        setSearch(false);
-        // console.error(error);
-      });
-  };
+  //   // console.log(iin);
+  //   fetch(`/api/search/applicant/${iin}`, {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: "Basic " + btoa(username + ":" + password),
+  //       "Access-Control-Allow-Headers": "Content-Type",
+  //       "Access-Control-Allow-Origin": "*",
+  //       "Content-Type": "application/json",
+  //       "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
+  //     },
+  //   })
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         setSearch(false);
+  //         return response.json();
+  //       } else {
+  //         throw new Error(`Request failed with status code ${response.status}`);
+  //       }
+  //     })
+  //     .then((data) => {
+  //       if (data.error) {
+  //         setIsUser(true);
+  //       }
+  //       dispatch(setDataUser(data));
+  //       setMessageBlock(true);
+  //     })
+  //     .catch((error) => {
+  //       setIsUser(true);
+  //       setSearch(false);
+  //       // console.error(error);
+  //     });
+  // };
 
   //SEND IIN TO DATABASE TO VERIFY USER
+  
   const verifyUser = async (iin) => {
     const response = await verifyUserByIIN(iin);
     //APPLICANT FIND IN DATABASE
@@ -121,14 +136,13 @@ const PracticeExamPage = () => {
     else{
       setNotPassExam(false)
       setSearch(true);
-      setDataUser(response);
+      dispatch(setDataUser(response));
     }
   };
 
-  // IF THE TIMER IS OUT OF TIME
+  // IF THE TIMER IS OUT OF TIME TOOGLE DISABLED BUTTON "Забронировать"
   const timeDone = () => {
     setDisBtn(true);
-    // setMessageBlock(false);
   };
 
   // SEND SMS CODE AGAIN
@@ -136,9 +150,11 @@ const PracticeExamPage = () => {
     setDisBtn(false);
     //RESTART TIMER
     setSeconds((seconds) => (seconds += 10));
+    const storageData = sessionStorage.getItem("iin");
+    verifyUser(JSON.parse(storageData))
   };
 
-  //SEND IIN AND VERIFY WITH SMS
+  //SEND IIN AND GET VERIFY CODE
   const getMessage = (data) => {
     verifyUser(data.IIN);
   };
@@ -157,7 +173,7 @@ const PracticeExamPage = () => {
     reset();
   };
 
-  useEffect(() => {}, [search, isReserv, seconds]);
+  useEffect(() => {}, [search, seconds]);
 
   return (
     <div className="offset_theory_exam_page flex-column">
@@ -210,11 +226,13 @@ const PracticeExamPage = () => {
             </button>
           </form>
         ) : (
+          // SHOW FORM TO SELECT DATE AND TIME TO RESERVATION PRACTICE EXAM
           <div className="d-flex w-100 text-start align-items-center justify-content-center">
-            <PracticeExamForm isReserv={isReserv} />
+            <PracticeExamForm  />
           </div>
         )}
       </div>
+      {/* SHOW INPUT TO VERIFY CODE */}
       {messageBlock && (
         <form
           className="d-flex flex-wrap flex-column align-items-center justify-content-center w-100 mt-3"

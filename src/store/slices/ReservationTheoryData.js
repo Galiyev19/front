@@ -14,12 +14,6 @@ const reservationTheoryData = createSlice({
     reducers: {
         setData: (state, action) => {
             state.data = action.payload
-            
-            console.log(action.payload)
-            // sessionStorage.setItem("date",JSON.stringify(action.payload))
-            
-           
-            // console.log(action.payload)
         }
     },
 })
