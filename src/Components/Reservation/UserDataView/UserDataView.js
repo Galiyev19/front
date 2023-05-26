@@ -6,6 +6,7 @@ export default function UserDataView() {
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("user"))
     setUser(userData)
+  
   }, []);
 
   return (

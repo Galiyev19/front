@@ -31,6 +31,8 @@ const PracticeExamPage = () => {
   const [messageBlock, setMessageBlock] = useState(false);
   const [seconds, setSeconds] = useState(180);
   const [disBtn, setDisBtn] = useState(false);
+  const [notPassExam, setNotPassExam] = useState(false);
+  const [isWrongCode, setIsWrongCode] = useState(false);
 
   const {
     register,
@@ -51,7 +53,6 @@ const PracticeExamPage = () => {
     const password = "admin";
 
     // console.log(iin);
-
     fetch(`/api/search/applicant/${iin}`, {
       method: "GET",
       headers: {
@@ -71,8 +72,8 @@ const PracticeExamPage = () => {
         }
       })
       .then((data) => {
-        if(data.error){
-          setIsUser(true)
+        if (data.error) {
+          setIsUser(true);
         }
         dispatch(setDataUser(data));
         setMessageBlock(true);
@@ -84,10 +85,35 @@ const PracticeExamPage = () => {
       });
   };
 
+  //SEND IIN TO DATABASE TO VERIFY USER
   const verifyUser = async (iin) => {
-    // const response = await verifyUserByIIN(iin);
-    sessionStorage.setItem("iin", JSON.stringify(iin));
-    setMessageBlock(true)
+    const response = await verifyUserByIIN(iin);
+    if (response.success) {
+      sessionStorage.setItem("iin", JSON.stringify(iin));
+      setMessageBlock(true);
+    } else {
+      isUser(true);
+    }
+  };
+
+  //SEND SMS CODE FROM USER
+  const sendMessageCode = async (verify_code) => {
+    const storageData = sessionStorage.getItem("iin");
+    const obj = {
+      iin: JSON.parse(storageData),
+      sms_code: verify_code,
+    };
+
+    const response = await verifySMSCode(obj);
+    if (response.error) {
+      setNotPassExam(true);
+    } else if (response.success === false) {
+      setIsWrongCode(true);
+    }else{
+      setNotPassExam(false)
+      setSearch(true);
+      setDataUser(response);
+    }
   };
 
   // IF THE TIMER IS OUT OF TIME
@@ -104,31 +130,21 @@ const PracticeExamPage = () => {
 
   //SEND IIN AND VERIFY WITH SMS
   const getMessage = (data) => {
-    // getUserData(data.IIN);
     verifyUser(data.IIN);
   };
 
-  //AFTER INPUT SMS CODE
+  //SEND SMS CODE FROM APPLICANT TO CHECK
   const submit = (data) => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
 
-    setSearch(true);
-    // getUserData(data);
-    reset();
-
-    setMessageBlock(false);
-
-    const storageData = sessionStorage.getItem("iin");
+    // getUserData(data.IIN);
     
-    const obj = {
-      iin: JSON.parse(storageData),
-      sms_code: data.message,
-    };
-
-    verifySMSCode(obj);
+    setMessageBlock(false);
+    sendMessageCode(data.message);
+    reset();
   };
 
   useEffect(() => {}, [search, isReserv, seconds]);
@@ -210,6 +226,10 @@ const PracticeExamPage = () => {
               },
             })}
           />
+          {/* ERROR APPLICANT NOT PASS THEORY EXAM */}
+          {notPassExam && <p>Завитель не сдал теоритический экзамен</p>}
+            {/* ERROR APPLICANT  */}
+          {isWrongCode && <p>Вы ввели не корректный код.</p>}
           <div className="d-flex flex-column w-50 align-items-center justify-content-center w-100 mt-3">
             <button
               className="btn btn-success mb-5"

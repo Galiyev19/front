@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  getCitiesList,
-  getDepartmentList,
-  getExamDateById,
-  getFreeExamPractice,
-} from "../../../../helpers/ApiRequestList";
-
-import { setDepartmentDataList } from "../../../../store/slices/departmentDataSlice";
 import { setData } from "../../../../store/slices/ReservationTheoryData";
 
 import UserDataView from "../../UserDataView/UserDataView";
 import ModalLoading from "../../ModalLoading/ModalLoading";
+import { setDataUser } from "../../../../store/slices/userDataSlice";
 
 const PracticeExamForm = ({ isReserv }) => {
   const [loading, setLoading] = useState(false);
@@ -26,19 +19,20 @@ const PracticeExamForm = ({ isReserv }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState(null);
   const [examId, setExamId] = useState(null);
-
+  const [kpp,setKPP] = useState("")
   const [errorText, setErrorText] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.userData.userData);
-
-  const [cityName, setCityName] = useState(null);
+  // const userData = useSelector((state) => state.userData.userData);
+  
+  
+ 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, isValid },
+    formState: { errors },
   } = useForm({
     selectCity: "",
     selectAddress: "",
@@ -82,10 +76,11 @@ const PracticeExamForm = ({ isReserv }) => {
     const username = "admin";
     const password = "admin";
 
+
     const id = id_depart;
     const categoryName = userData.category;
-    const kpp = userData.kpp;
-
+    const kpp = userData.kpp === "Автомат" ? "автомат" : "механика";
+    console.log(kpp)
     fetch(url, {
       headers: {
         Authorization: "Basic " + btoa(username + ":" + password),
@@ -172,9 +167,11 @@ const PracticeExamForm = ({ isReserv }) => {
     }, 500);
   };
 
+
+  const userData = JSON.parse(sessionStorage.getItem("user"))
   useEffect(() => {
     const todayDate = new Date().toISOString().slice(0, 10);
-    setToday(todayDate);
+    setToday(todayDate);                              
     getFreeExamPractice(userData.department_code);
   }, []);
 
@@ -187,14 +184,15 @@ const PracticeExamForm = ({ isReserv }) => {
         onSubmit={handleSubmit(handleSubmitPraticeExam)}
         className="d-flex flex-column w-100"
       >
-        {userData.category === "B" && (
+        {userData.kpp === "B" && (
           <>
-            <p className="my-2 text-danger">
-              Выберите вид КПП, который вы указали при регистрации.
+            <p className="my-2 text-danger fs-3">
+              Обязательно выберите вид КПП, который вы указали при регистрации.
             </p>
-            <select className="form-select">
-              <option>Автомат</option>
-              <option>Механика</option>
+            <select className="form-select" onChange={(e) => setKPP(e.target.value)}>
+              <option value="">Выберите КПП</option>
+              <option value="АТ">Автомат</option>
+              <option value="МТ">Механика</option>
             </select>
           </>
         )}

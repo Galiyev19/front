@@ -17,8 +17,6 @@ export default function Home() {
   const { isHover, setIsHover } = useContext(MenuHoverContext);
  
 
-
-
   return (
     <main className="main">
       <div className="header_text_block">

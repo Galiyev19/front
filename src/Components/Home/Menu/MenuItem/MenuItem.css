@@ -46,9 +46,8 @@
     justify-content: space-between;
     cursor: pointer;
     padding: 16px 15%;
-    /* transition: .3s; */
-    animation: slideDown .8s ease-in-out forwards;
-    transform-origin: center bottom;
+    animation: slideDown 1.1s ease-in-out forwards;
+    transform-origin: top bottom;
 
 }
 
