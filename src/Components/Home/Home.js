@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { MenuHoverContext } from "../../Context/Context";
 
 import "./Home.css";
+import { Container } from "react-bootstrap";
 
 export default function Home() {
   const { t } = useTranslation();

@@ -1,4 +1,4 @@
-
+const { btoa } = window;
 export const getCitiesList = async () => {
   const url = "/api/cities/";
   const username = "admin";

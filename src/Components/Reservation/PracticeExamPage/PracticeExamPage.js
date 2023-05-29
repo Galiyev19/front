@@ -73,7 +73,7 @@ const PracticeExamPage = () => {
       //APPLICANT FIND IN DATABASE
       if (response.success) {
         sessionStorage.setItem("iin", JSON.stringify(iin));
-        setMessageBlock(true);
+        setMessageBlock(false);
       }
       //APLICANT NOT FOUND
       else {
@@ -86,29 +86,33 @@ const PracticeExamPage = () => {
 
   //SEND SMS CODE FROM USER
   const sendVerifyCodeApplicant = async (verify_code) => {
-    const storageData = sessionStorage.getItem("iin");
-    const obj = {
-      iin: JSON.parse(storageData),
-      sms_code: verify_code,
-    };
+    try {
+      const storageData = sessionStorage.getItem("iin");
+      const obj = {
+        iin: JSON.parse(storageData),
+        code: verify_code,
+      };
 
-    const response = await verifySMSCode(obj);
+      const response = await verifySMSCode(obj);
 
-    // APLICANT NOT PASS EXAM
-    if (response.error) {
-      //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
-      setNotPassExam(true);
-    }
-    //APLICANT INPUT WRONG VERIFY CODE
-    else if (response.success === false) {
-      //SHOW ERROR APPLICANT INPUT WRONG VERIFY CODE
-      setIsWrongCode(true);
-    }
-    //OK
-    else {
-      setNotPassExam(false);
-      setIsVerify(true);
-      dispatch(setDataUser(response));
+      // APLICANT NOT PASS EXAM
+      if (response.error) {
+        //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
+        setNotPassExam(true);
+      }
+      //APLICANT INPUT WRONG VERIFY CODE
+      else if (response.success === false) {
+        //SHOW ERROR APPLICANT INPUT WRONG VERIFY CODE
+        setIsWrongCode(true);
+      }
+      //OK
+      else {
+        setNotPassExam(false);
+        setIsVerify(true);
+        dispatch(setDataUser(response));
+      }
+    } catch (e) {
+      navigate("/error-verify-page");
     }
   };
 
@@ -132,7 +136,7 @@ const PracticeExamPage = () => {
   };
 
   //SEND SMS CODE FROM APPLICANT TO CHECK
-  const submit = (data) => {
+  const submit = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -144,7 +148,7 @@ const PracticeExamPage = () => {
   };
 
   useEffect(() => {}, [isVerify, seconds]);
- 
+
   return (
     <div className="offset_theory_exam_page flex-column">
       <div className="d-flex w-100 text-center flex-column mt-4">
@@ -235,8 +239,17 @@ const PracticeExamPage = () => {
             otpType="number"
             maxTime={seconds}
             disabled={seconds === 0}
+            inputStyles={{
+              border: "1px solid green",
+              width: "44px",
+              height: "44px",
+              fontSize: "18px",
+              borderRadius: "8px",
+            }}
+            focusStyle={{
+              border: "1px solid green",
+            }}
           />
-          
 
           {/* ERROR APPLICANT NOT PASS THEORY EXAM */}
           {notPassExam && <p>Завитель не сдал теоритический экзамен</p>}
