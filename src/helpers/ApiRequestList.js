@@ -1,3 +1,4 @@
+
 export const getCitiesList = async () => {
   const url = "/api/cities/";
   const username = "admin";
@@ -151,6 +152,7 @@ export const verifyUserByIIN =  async (iin) => {
   const url = "/api/verify/"
   const username = "admin"
   const password = "admin"
+
 
   const response = await fetch(url + iin, {
     header: {

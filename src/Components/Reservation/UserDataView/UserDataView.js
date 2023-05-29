@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function UserDataView() {
+  const {t} = useTranslation()
   const [user, setUser] = useState(null);
   useEffect(() => {
     //GET INFO ABOUT APPLICANT FROM STORAGE
@@ -11,16 +13,16 @@ export default function UserDataView() {
   return (
     <div className="d-flex w-100 flex-column my-2">
       <p className="ticket_text_aside">
-        ИИН: <span className="fw-bold">{user?.iin}</span>
+        {t("iin")}: <span className="fw-bold">{user?.iin}</span>
       </p>
       <p className="ticket_text_aside">
-        Город: <span className="fw-bold">{user?.city}</span>
+        {t("city")}: <span className="fw-bold">{user?.city}</span>
       </p>
       <p className="ticket_text_aside">
-        Отделение: <span className="fw-bold">{user?.department}</span>
+        {t("department")}: <span className="fw-bold">{user?.department}</span>
       </p>
       <p className="ticket_text_aside">
-        Категория: <span className="fw-bold">{user?.category}</span>
+        {t("category")}: <span className="fw-bold">{user?.category}</span>
       </p>
     </div>
   );

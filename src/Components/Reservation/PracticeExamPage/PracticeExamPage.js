@@ -10,6 +10,7 @@ import PracticeExamForm from "./PracticeExamForm/PracticeExamForm";
 import ModalPracticeError from "../../Modal/ModalPracticeError";
 import ModalCongratPractice from "../../Modal/ModalCongratPractice";
 import ReactCountdownClock from "react-countdown-clock";
+import ErrorVerifyPage from "../../ErrorPage/ErrorVerifyPage";
 
 //REDUX
 import { setDataUser } from "../../../store/slices/userDataSlice";
@@ -24,20 +25,22 @@ import {
 } from "../../../helpers/ApiRequestList";
 
 const PracticeExamPage = () => {
+  //USE TRANSLATE LANG
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   //SHOW FORM SELECT DATE AND TIME FOR EXAM AFTER VERIFY APPLICANT
-  const [search, setSearch] = useState(false);
+  const [isVerify, setIsVerify] = useState(false);
   //SHOW LOADING ANIMATION MODAL
   const [isloading, setIsLoading] = useState(false);
   //IF APPLICANT NOT FOUND SHOW ERROR
   const [isUser, setIsUser] = useState(false);
-  
+
   //SHOW MODALS
   const [congartModal, setCongartModal] = useState(false);
   const [isTheoryResModal, setIsTheoryResModal] = useState(false);
 
+  //TOOGLE SHOW INPUT VERIFY CODE
   const [messageBlock, setMessageBlock] = useState(false);
   //SECONDS FOR TIMER
   const [seconds, setSeconds] = useState(180);
@@ -61,61 +64,26 @@ const PracticeExamPage = () => {
 
   const dispatch = useDispatch();
 
-  //old code to get info applicant
-  // const getUserData = async (iin) => {
-  //   const username = "admin";
-  //   const password = "admin";
-
-  //   // console.log(iin);
-  //   fetch(`/api/search/applicant/${iin}`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: "Basic " + btoa(username + ":" + password),
-  //       "Access-Control-Allow-Headers": "Content-Type",
-  //       "Access-Control-Allow-Origin": "*",
-  //       "Content-Type": "application/json",
-  //       "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
-  //     },
-  //   })
-  //     .then((response) => {
-  //       if (response.ok) {
-  //         setSearch(false);
-  //         return response.json();
-  //       } else {
-  //         throw new Error(`Request failed with status code ${response.status}`);
-  //       }
-  //     })
-  //     .then((data) => {
-  //       if (data.error) {
-  //         setIsUser(true);
-  //       }
-  //       dispatch(setDataUser(data));
-  //       setMessageBlock(true);
-  //     })
-  //     .catch((error) => {
-  //       setIsUser(true);
-  //       setSearch(false);
-  //       // console.error(error);
-  //     });
-  // };
-
   //SEND IIN TO DATABASE TO VERIFY USER
-  
   const verifyUser = async (iin) => {
-    const response = await verifyUserByIIN(iin);
-    //APPLICANT FIND IN DATABASE
-    if (response.success) {
-      sessionStorage.setItem("iin", JSON.stringify(iin));
-      setMessageBlock(true);
-    } 
-    //APLICANT NOT FOUND
-    else {
-      isUser(true);
+    try {
+      const response = await verifyUserByIIN(iin);
+      //APPLICANT FIND IN DATABASE
+      if (response.success) {
+        sessionStorage.setItem("iin", JSON.stringify(iin));
+        setMessageBlock(true);
+      }
+      //APLICANT NOT FOUND
+      else {
+        isUser(true);
+      }
+    } catch (e) {
+      navigate("/error-verify-page")
     }
   };
 
   //SEND SMS CODE FROM USER
-  const sendMessageCode = async (verify_code) => {
+  const sendVerifyCodeApplicant = async (verify_code) => {
     const storageData = sessionStorage.getItem("iin");
     const obj = {
       iin: JSON.parse(storageData),
@@ -124,18 +92,20 @@ const PracticeExamPage = () => {
 
     const response = await verifySMSCode(obj);
 
-    // APLICANT NOT PASS EXAM 
+    // APLICANT NOT PASS EXAM
     if (response.error) {
+      //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
       setNotPassExam(true);
     }
     //APLICANT INPUT WRONG VERIFY CODE
     else if (response.success === false) {
+      //SHOW ERROR APPLICANT INPUT WRONG VERIFY CODE
       setIsWrongCode(true);
     }
     //OK
-    else{
-      setNotPassExam(false)
-      setSearch(true);
+    else {
+      setNotPassExam(false);
+      setIsVerify(true);
       dispatch(setDataUser(response));
     }
   };
@@ -151,10 +121,10 @@ const PracticeExamPage = () => {
     //RESTART TIMER
     setSeconds((seconds) => (seconds += 10));
     const storageData = sessionStorage.getItem("iin");
-    verifyUser(JSON.parse(storageData))
+    verifyUser(JSON.parse(storageData));
   };
 
-  //SEND IIN AND GET VERIFY CODE
+  //SUBMIT - SEND IIN AND GET VERIFY CODE
   const getMessage = (data) => {
     verifyUser(data.IIN);
   };
@@ -167,13 +137,13 @@ const PracticeExamPage = () => {
     }, 500);
 
     // getUserData(data.IIN);
-    
+
     setMessageBlock(false);
-    sendMessageCode(data.message);
+    sendVerifyCodeApplicant(data.message);
     reset();
   };
 
-  useEffect(() => {}, [search, seconds]);
+  useEffect(() => {}, [isVerify, seconds]);
 
   return (
     <div className="offset_theory_exam_page flex-column">
@@ -187,7 +157,7 @@ const PracticeExamPage = () => {
         </button>
       </div>
       <div className="d-flex w-100 text-start align-items-center justify-content-center">
-        {!search ? (
+        {!isVerify ? (
           <form
             className={messageBlock ? "hide" : "form_input"}
             onSubmit={handleSubmit(getMessage)}
@@ -196,7 +166,7 @@ const PracticeExamPage = () => {
             {/* INPUT TICKET */}
             <input
               className="form-control input_w my-2"
-              placeholder="Введите ИИН"
+              placeholder={t("iin_input_placeholder")}
               maxLength="12"
               minLength="12"
               name="IIN"
@@ -208,12 +178,15 @@ const PracticeExamPage = () => {
                 },
               })}
             />
+
             {/* ERRORS FOR INPUT */}
             {errors.IIN && <p className="text-danger">{errors.IIN.message}</p>}
+
             {/* ERROR NOT FOUND TICKTET */}
             {isUser && (
               <p className="text-danger">Заявитель с таким ИИН не найден.</p>
             )}
+
             {/* ERROR IF USER BOOKIG FOR PRACTICE EXAM */}
 
             {/* SUBMIT BUTTON */}
@@ -228,7 +201,7 @@ const PracticeExamPage = () => {
         ) : (
           // SHOW FORM TO SELECT DATE AND TIME TO RESERVATION PRACTICE EXAM
           <div className="d-flex w-100 text-start align-items-center justify-content-center">
-            <PracticeExamForm  />
+            <PracticeExamForm />
           </div>
         )}
       </div>
@@ -254,9 +227,11 @@ const PracticeExamPage = () => {
               },
             })}
           />
+
           {/* ERROR APPLICANT NOT PASS THEORY EXAM */}
           {notPassExam && <p>Завитель не сдал теоритический экзамен</p>}
-            {/* ERROR APPLICANT  */}
+
+          {/* ERROR APPLICANT  */}
           {isWrongCode && <p>Вы ввели не корректный код.</p>}
           <div className="d-flex flex-column w-50 align-items-center justify-content-center w-100 mt-3">
             <button
@@ -273,6 +248,7 @@ const PracticeExamPage = () => {
             >
               Отправить код повторно
             </button>
+            {/* COUNT DOWN TIMER */}
             <ReactCountdownClock
               seconds={seconds}
               color="#6c757d"
@@ -283,13 +259,16 @@ const PracticeExamPage = () => {
           </div>
         </form>
       )}
+
       {/* MODAL LOADING ANIMATE  */}
       {isloading && <ModalLoading isLoading={isloading} />}
+
       {/* SHOW MODAL ERROR */}
       <ModalPracticeError
         isTheoryResModal={isTheoryResModal}
         setShow={setIsTheoryResModal}
       />
+
       {/* SHOW CONGRATULATION MODAL */}
       <ModalCongratPractice
         congartModal={congartModal}
