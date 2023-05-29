@@ -8,7 +8,7 @@ import {IoIosArrowBack} from 'react-icons/io'
 
 import "./Reservation.css";
 
-const Reservaton = () => {
+const Reservation = () => {
   
   const {t} = useTranslation()
   const navigate = useNavigate()
@@ -30,4 +30,4 @@ const Reservaton = () => {
   );
 };
 
-export default Reservaton;
+export default Reservation;

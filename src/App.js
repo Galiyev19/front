@@ -6,7 +6,7 @@ import { MenuHoverProvider } from "./Context/Context";
 import Header from "./Components/Header/Header";
 import Home from "./Components/Home/Home";
 import Application from "./Components/Application/Application";
-import Reservaton from "./Components/Reservation/Reservaton";
+import Reservation from "./Components/Reservation/Reservaton";
 import ResultExam from "./Components/ResultExam/ResultExam";
 import TrafficRulesInstructions from "./Components/TrafficRulesInstructions/TrafficRulesInstructions";
 import TicketTheoryExam from "./Components/TicketTheoryExam/TicketTheoryExam";
@@ -31,7 +31,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>}/>
           <Route path="/application" element={<Application/>}/>
-          <Route path="/reservation" element={<Reservaton/>}/>
+          <Route path="/reservation" element={<Reservation/>}/>
           <Route path="/reservation/practice-exam" element={<PracticeExamPage/>}/>
           <Route path="/reservation/practice-exam/ticket" element={<TicketPracticeExam/>}/>
           <Route path="/result-exam" element={<ResultExam/>}/>

@@ -8,12 +8,8 @@ import ModalLoading from "../../ModalLoading/ModalLoading";
 import UserDataView from "../../UserDataView/UserDataView";
 
 import { setData } from "../../../../store/slices/ReservationTheoryData";
-import { setDepartmentDataList } from "../../../../store/slices/departmentDataSlice";
-import { toggleIsAdd } from "../../../../store/slices/congratEnrollExam";
 
 import {
-  getCitiesList,
-  getDepartmentList,
   getExamDateById,
 } from "../../../../helpers/ApiRequestList";
 

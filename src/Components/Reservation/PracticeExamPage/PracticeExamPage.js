@@ -11,6 +11,7 @@ import ModalPracticeError from "../../Modal/ModalPracticeError";
 import ModalCongratPractice from "../../Modal/ModalCongratPractice";
 import ReactCountdownClock from "react-countdown-clock";
 import ErrorVerifyPage from "../../ErrorPage/ErrorVerifyPage";
+import OTPInput, { ResendOTP } from "otp-input-react";
 
 //REDUX
 import { setDataUser } from "../../../store/slices/userDataSlice";
@@ -50,6 +51,7 @@ const PracticeExamPage = () => {
   const [notPassExam, setNotPassExam] = useState(false);
   //SHOW ERROR IF APPLICANT INPUT WRONG VERIFY CODE
   const [isWrongCode, setIsWrongCode] = useState(false);
+  const [OTP, setOTP] = useState("");
 
   const {
     register,
@@ -78,7 +80,7 @@ const PracticeExamPage = () => {
         isUser(true);
       }
     } catch (e) {
-      navigate("/error-verify-page")
+      navigate("/error-verify-page");
     }
   };
 
@@ -136,15 +138,13 @@ const PracticeExamPage = () => {
       setIsLoading(false);
     }, 500);
 
-    // getUserData(data.IIN);
-
     setMessageBlock(false);
-    sendVerifyCodeApplicant(data.message);
+    sendVerifyCodeApplicant(OTP);
     reset();
   };
 
   useEffect(() => {}, [isVerify, seconds]);
-
+ 
   return (
     <div className="offset_theory_exam_page flex-column">
       <div className="d-flex w-100 text-center flex-column mt-4">
@@ -207,14 +207,14 @@ const PracticeExamPage = () => {
       </div>
       {/* SHOW INPUT TO VERIFY CODE */}
       {messageBlock && (
-        <form
+        <div
           className="d-flex flex-wrap flex-column align-items-center justify-content-center w-100 mt-3"
-          onSubmit={handleSubmit(submit)}
+          // onSubmit={handleSubmit(submit)}
         >
           <p className="px-3 text-center">
             Введите отправленный на ваш телефонный номер код.
           </p>
-          <input
+          {/* <input
             className="form-control w-50 mb-2"
             maxLength="6"
             minLength="6"
@@ -226,7 +226,17 @@ const PracticeExamPage = () => {
                 message: "ИИН состоит только из цифр",
               },
             })}
+          /> */}
+          <OTPInput
+            value={OTP}
+            onChange={setOTP}
+            autoFocus
+            OTPLength={6}
+            otpType="number"
+            maxTime={seconds}
+            disabled={seconds === 0}
           />
+          
 
           {/* ERROR APPLICANT NOT PASS THEORY EXAM */}
           {notPassExam && <p>Завитель не сдал теоритический экзамен</p>}
@@ -237,7 +247,8 @@ const PracticeExamPage = () => {
             <button
               className="btn btn-success mb-5"
               type="submit"
-              disabled={disBtn}
+              onClick={submit}
+              disabled={disBtn || OTP.length < 6}
             >
               Забронировать
             </button>
@@ -257,7 +268,7 @@ const PracticeExamPage = () => {
               onComplete={timeDone}
             />
           </div>
-        </form>
+        </div>
       )}
 
       {/* MODAL LOADING ANIMATE  */}
