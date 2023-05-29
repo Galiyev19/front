@@ -73,10 +73,11 @@ const PracticeExamPage = () => {
       //APPLICANT FIND IN DATABASE
       if (response.success) {
         sessionStorage.setItem("iin", JSON.stringify(iin));
-        setMessageBlock(false);
+        setMessageBlock(true);
       }
       //APLICANT NOT FOUND
       else {
+        setMessageBlock(false)
         isUser(true);
       }
     } catch (e) {
@@ -110,6 +111,7 @@ const PracticeExamPage = () => {
         setNotPassExam(false);
         setIsVerify(true);
         dispatch(setDataUser(response));
+        setMessageBlock(false)
       }
     } catch (e) {
       navigate("/error-verify-page");
