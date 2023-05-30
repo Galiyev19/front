@@ -142,11 +142,13 @@ const PracticeExamPage = () => {
         //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
         setMessageBlock(false)
         setNotPassExam(true);
+        setOTP("")
       }
       //APLICANT INPUT WRONG VERIFY CODE
       else if (data.success) {
         //SHOW ERROR APPLICANT INPUT WRONG VERIFY CODE
         setIsWrongCode(true);
+        setOTP("")
       }
       //OK
       else if(data) {
@@ -154,6 +156,7 @@ const PracticeExamPage = () => {
         setIsVerify(true);
         dispatch(setDataUser(data));
         setMessageBlock(false)
+        setOTP("")
       }
     // } 
     })
