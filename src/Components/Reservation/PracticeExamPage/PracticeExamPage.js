@@ -89,35 +89,77 @@ const PracticeExamPage = () => {
 
   //SEND SMS CODE FROM USER
   const sendVerifyCodeApplicant = async (verify_code) => {
-    try {
-      const storageData = sessionStorage.getItem("iin");
-      const obj = {
-        iin: JSON.parse(storageData),
-        code: verify_code,
-      };
+    // try {
+    //   const storageData = sessionStorage.getItem("iin");
+    //   const obj = {
+    //     iin: JSON.parse(storageData),
+    //     code: verify_code,
+    //   };
 
-      const response = await verifySMSCode(obj);
+    //   const response = await verifySMSCode(obj);
 
-      // APLICANT NOT PASS EXAM
-      if (response.error) {
+    //   // APLICANT NOT PASS EXAM
+    //   if (response.error) {
+    //     //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
+    //     setNotPassExam(true);
+    //   }
+    //   //APLICANT INPUT WRONG VERIFY CODE
+    //   else if (response.success === false) {
+    //     //SHOW ERROR APPLICANT INPUT WRONG VERIFY CODE
+    //     setIsWrongCode(true);
+    //   }
+    //   //OK
+    //   else {
+    //     setNotPassExam(false);
+    //     setIsVerify(true);
+    //     dispatch(setDataUser(response));
+    //     setMessageBlock(false)
+    //   }
+    // } catch (e) {
+    //   navigate("/error-verify-page");
+    // }
+
+    fetch(url, {
+      header: {
+        Authorization: "Basic " + btoa(username + ":" + password),
+        "Accept" : "application/json",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
+      },
+      method: "POST",
+      body: JSON.stringify(obj),
+    }).then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(`Request failed with status code ${response.status}`);
+      }
+    })
+    .then((data) => {
+      if (data.error) {
         //SHOW ERROR IF APPLICANT NOT PASS THEORY EXAM
+        setMessageBlock(false)
         setNotPassExam(true);
       }
       //APLICANT INPUT WRONG VERIFY CODE
-      else if (response.success === false) {
+      else if (data.success) {
         //SHOW ERROR APPLICANT INPUT WRONG VERIFY CODE
         setIsWrongCode(true);
       }
       //OK
-      else {
+      else if(data) {
         setNotPassExam(false);
         setIsVerify(true);
-        dispatch(setDataUser(response));
+        dispatch(setDataUser(data));
         setMessageBlock(false)
       }
-    } catch (e) {
-      navigate("/error-verify-page");
-    }
+    // } 
+    })
+    .catch(function (res) {
+      return res
+    });
   };
 
   // IF THE TIMER IS OUT OF TIME TOOGLE DISABLED BUTTON "Забронировать"
@@ -188,11 +230,11 @@ const PracticeExamPage = () => {
             />
 
             {/* ERRORS FOR INPUT */}
-            {errors.IIN && <p className="text-danger">{errors.IIN.message}</p>}
+            {errors.IIN && <p className="text-danger">{errors.message}</p>}
 
             {/* ERROR NOT FOUND TICKTET */}
             {isUser && (
-              <p className="text-danger">Заявитель с таким ИИН не найден.</p>
+              <p className="text-danger my-2">Заявитель с таким ИИН не найден.</p>
             )}
 
             {/* ERROR IF USER BOOKIG FOR PRACTICE EXAM */}
@@ -256,7 +298,7 @@ const PracticeExamPage = () => {
           />
 
           {/* ERROR APPLICANT NOT PASS THEORY EXAM */}
-          {notPassExam && <p>Завитель не сдал теоритический экзамен</p>}
+          {notPassExam && <h2 className="texd-danger text-center">Заявитель не сдал теоритический экзамен</h2>}
 
           {/* ERROR APPLICANT  */}
           {isWrongCode && <p>Вы ввели не корректный код.</p>}

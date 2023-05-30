@@ -16,7 +16,6 @@
   margin: 16px 0px;
   color: #ffffff;
   padding: 16px 18px;
-  height: 50%;
 }
 
 .link_btn_resev_exam > p {
@@ -66,13 +65,13 @@
   }
 
   .link_btn_resev_exam > img{
-    height: 120px;
-    width: 120px;
+    height: 90px;
+    width: 80px;
     margin-bottom: 8px;
   }
 
   .link_btn_resev_exam > p{
-    font-size: 16px;
+    font-size: 24px;
   }
 }
 
@@ -85,8 +84,9 @@
     justify-content: center;
   }
   .link_btn_resev_exam > p{
-    font-size: 16px;
-    line-height: 14px;
+    font-size: 22px;
+    line-height: 18px;
+    margin-top: 16px;
   }
 
   .offset_reservation{
@@ -113,6 +113,7 @@
   .link_btn_resev_exam > p{
     font-size: 20px;
     line-height: 18px;
+    margin: 0px;
   }
 
 }
@@ -120,15 +121,17 @@
 
 @media (max-width: 414px) {
   .link_btn_resev_exam > p {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .offset_reservation{
     padding: 0px 4% 0px;
   }
+  
 
-  .link_btn_resev_exam{
-    flex-direction: column;
+  .link_btn_resev_exam > img{
+    height: 40px;
+    width: 20%;
   }
   
 }

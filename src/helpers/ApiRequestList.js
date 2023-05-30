@@ -178,13 +178,14 @@ export const verifyUserByIIN =  async (iin) => {
 
 
 export const verifySMSCode =  async (obj) => {
-  const url = "/api/verify"
+  const url = "/api/verify/"
   const username = "admin"
   const password = "admin"
 
   fetch(url, {
     header: {
       Authorization: "Basic " + btoa(username + ":" + password),
+      "Accept" : "application/json",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
