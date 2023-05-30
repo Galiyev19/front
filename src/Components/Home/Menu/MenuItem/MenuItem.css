@@ -100,13 +100,17 @@
     .menu_item{
         padding: 12px 8%;
         height: 25%;
-       }
+    }
 }
 
 @media (max-width: 576px) {
    .menu_item_text{
     font-size: 28px;
     line-height: 24px;
+   }
+
+   .menu_item > img {
+     display: none;
    }
 }
 
