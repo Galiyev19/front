@@ -73,11 +73,13 @@ const PracticeExamPage = () => {
       //APPLICANT FIND IN DATABASE
       if (response.success) {
         sessionStorage.setItem("iin", JSON.stringify(iin));
+        //SHOW INPUT OTP TO VERIFY CODE
         setMessageBlock(true);
       }
       //APLICANT NOT FOUND
       else {
         setMessageBlock(false)
+        //APPLICANT NOT FOUND ERROR
         isUser(true);
       }
     } catch (e) {

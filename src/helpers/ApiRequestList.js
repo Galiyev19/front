@@ -149,7 +149,7 @@ export const getUserByAppNumber = async (id) => {
 };
 
 export const verifyUserByIIN =  async (iin) => {
-  const url = "/api/verify/"
+  const url = "http://booking.gov4c.kz/api/verify/"
   const username = "admin"
   const password = "admin"
 
