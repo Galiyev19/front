@@ -149,7 +149,7 @@ export const getUserByAppNumber = async (id) => {
 };
 
 export const verifyUserByIIN =  async (iin) => {
-  const url = "http://booking.gov4c.kz/api/verify/"
+  const url = "/api/verify/"
   const username = "admin"
   const password = "admin"
 
@@ -162,7 +162,8 @@ export const verifyUserByIIN =  async (iin) => {
       "Content-Type": "application/json",
       "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
     },
-    method: "GET"
+    method: "GET",
+    mode: "no-cors"
   })
 
   const result = response.json();
