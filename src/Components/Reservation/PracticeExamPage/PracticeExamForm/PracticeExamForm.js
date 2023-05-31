@@ -204,7 +204,7 @@ const PracticeExamForm = () => {
         className="d-flex flex-column w-100"
       >
         {/* IF APPLICANT HAVE CATEGORY "B" */}
-        {userData.kpp === "B" && (
+        {userData.category === "B" && (
           <>
             <p className="my-2 text-danger fs-3">
               Обязательно выберите вид КПП, который вы указали при регистрации.
