@@ -11,6 +11,7 @@
     font-family: "Montserrat";
     font-size: 18px;
     letter-spacing: 1px;
+    width: 75% !important; 
 }
 
 .input_res_exam::placeholder{
@@ -23,4 +24,28 @@
 .input_res_exam::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+
+
+.input_w{ 
+    width: 100%
+}
+
+.btn_w{
+    width: 50% !important;
+}
+
+@media (max-width:992px) {
+    .offset_result_exam{
+        padding: 0px 5% 0px;
+    }
+
+    .input_res_exam{
+        width: 100%;
+    }
+
+    .btn_w{
+        width: 75%;
+    }
 }
