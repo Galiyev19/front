@@ -118,7 +118,17 @@ const PracticeExamPage = () => {
     // } catch (e) {
     //   navigate("/error-verify-page");
     // }
-
+    
+     const url = "/api/verify/"
+  const username = "admin"
+  const password = "admin"
+   
+      const storageData = sessionStorage.getItem("iin");
+      const obj = {
+        iin: JSON.parse(storageData),
+        code: verify_code,
+     
+   
     fetch(url, {
       header: {
         Authorization: "Basic " + btoa(username + ":" + password),
