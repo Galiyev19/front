@@ -54,14 +54,14 @@ const ResultExam = () => {
 
   return (
     <div className="offset_result_exam">
-      <h4 className="text-center">Введите номер ЦТ</h4>
+      <h4 className="text-center">Введите номер цифрового талона</h4>
       <div className="d-flex align-items-center justify-content-center w-100 min-h-100 mt-5">
         <form
           onSubmit={handleSubmit(searchDigitalTicket)}
           className="d-flex flex-column w-100 align-items-center justify-content-center mt-2"
         >
           <input
-            className="form-control w-50 input_res_exam"
+            className="form-control  input_res_exam"
             placeholder="Введите номер ЦТ"
             maxLength="12"
             minLength="12"
@@ -91,7 +91,7 @@ const ResultExam = () => {
           <div className="d-flex w-100 align-items-center justify-content-center my-5">
             <button
               type="submit"
-              className="btn btn-success px-4 py-2"
+              className="btn btn-success px-4 py-2 btn_w"
               disabled={!isDirty || !isValid}
             >
               поиск
