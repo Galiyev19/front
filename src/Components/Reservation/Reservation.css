@@ -134,8 +134,14 @@
   }
   
    .link_btn_resev_exam{
-    padding: 8px;
+    padding: 14px 12px;
   }
   
+}
+
+@media(max-width: 375px){
+  .link_btn_resev_exam{
+    padding: 8px;
+  }
 }
 
