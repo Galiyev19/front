@@ -119,15 +119,15 @@ const PracticeExamPage = () => {
     //   navigate("/error-verify-page");
     // }
     
-     const url = "/api/verify/"
-  const username = "admin"
-  const password = "admin"
+    const url = "/api/verify/"
+    const username = "admin"
+    const password = "admin"
    
-      const storageData = sessionStorage.getItem("iin");
-      const obj = {
+     const storageData = sessionStorage.getItem("iin");
+     const obj = {
         iin: JSON.parse(storageData),
         code: verify_code,
-     
+      }  
    
     fetch(url, {
       header: {
