@@ -83,7 +83,7 @@ const PracticeExamPage = () => {
         isUser(true);
       }
     } catch (e) {
-      navigate("/error-verify-page");
+      
     }
   };
 
