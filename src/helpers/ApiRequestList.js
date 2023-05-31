@@ -154,7 +154,7 @@ export const verifyUserByIIN =  async (iin) => {
   const password = "admin"
 
 
-  const response = await fetch(url + iin, {
+  const response = await fetch(url + iin + "/", {
     header: {
       Authorization: "Basic " + btoa(username + ":" + password),
       "Access-Control-Allow-Headers": "Content-Type",
