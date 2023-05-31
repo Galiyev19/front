@@ -122,10 +122,10 @@ const PracticeExamPage = () => {
     fetch(url, {
       header: {
         Authorization: "Basic " + btoa(username + ":" + password),
-        "Accept" : "application/json",
+        "Accept" : "application/json; charset=utf-8",
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json;charset=utf-8",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
       },
       method: "POST",
