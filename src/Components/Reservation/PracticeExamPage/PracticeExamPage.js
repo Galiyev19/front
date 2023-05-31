@@ -265,7 +265,7 @@ const PracticeExamPage = () => {
           // onSubmit={handleSubmit(submit)}
         >
           <p className="px-3 text-center">
-            Введите отправленный на ваш телефонный номер код.
+            Введите отправленный на ваш телефон номер код.
           </p>
           {/* <input
             className="form-control w-50 mb-2"
